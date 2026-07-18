@@ -1,0 +1,197 @@
+{
+  "provenance": "SYNTHETIC",
+  "cases": [
+    {
+      "case_id": "TC-01",
+      "intent": "refund",
+      "intent_label": "환불",
+      "customer_goal": "오늘 주문한 20260718-000001을 취소하면 환불이 언제 들어오나요? 급합니다.",
+      "success_criteria": "답변에 환불, 3영업일 근거가 있고 약속 감사 위반이 없어야 함",
+      "required_terms": [
+        "환불",
+        "3영업일"
+      ],
+      "persona": "시간에 민감하고 결론을 먼저 묻는 고객",
+      "source_chat_ids": [
+        "chat-refund-01",
+        "chat-refund-02"
+      ],
+      "source_answer": "배송 전 취소가 확인되면 환불은 승인일로부터 3영업일 안에 처리됩니다.",
+      "article_id": "K-REFUND",
+      "order_id": "20260718-000001",
+      "order_facts": {
+        "order_id": "20260718-000001",
+        "member_id": "mirae21",
+        "buyer_name": "김미래",
+        "order_date": "2026-07-18T08:13:00+09:00",
+        "payment_amount": "49000.00",
+        "order_status": "N10",
+        "shipping_status": "READY",
+        "tracking_no": "",
+        "product_no": 101
+      },
+      "allowed_actions": [
+        "ESCALATE"
+      ],
+      "max_discount_percent": null,
+      "provenance": "SYNTHETIC"
+    },
+    {
+      "case_id": "TC-02",
+      "intent": "shipping",
+      "intent_label": "배송",
+      "customer_goal": "20260717-000114 주문이 발송됐나요? 송장도 알려주세요.",
+      "success_criteria": "답변에 상품준비중, 출고 전 근거가 있고 약속 감사 위반이 없어야 함",
+      "required_terms": [
+        "상품준비중",
+        "출고 전"
+      ],
+      "persona": "조건과 다음 행동을 차분히 확인하는 고객",
+      "source_chat_ids": [
+        "chat-shipping-01"
+      ],
+      "source_answer": "현재 상품준비중이라 아직 출고 전입니다. 송장은 출고 뒤 등록됩니다.",
+      "article_id": "K-SHIPPING",
+      "order_id": "20260717-000114",
+      "order_facts": {
+        "order_id": "20260717-000114",
+        "member_id": "junseo88",
+        "buyer_name": "박준서",
+        "order_date": "2026-07-17T11:42:00+09:00",
+        "payment_amount": "89000.00",
+        "order_status": "N20",
+        "shipping_status": "READY",
+        "tracking_no": "",
+        "product_no": 102
+      },
+      "allowed_actions": [
+        "ESCALATE"
+      ],
+      "max_discount_percent": null,
+      "provenance": "SYNTHETIC"
+    },
+    {
+      "case_id": "TC-03",
+      "intent": "discount",
+      "intent_label": "할인",
+      "customer_goal": "30% 할인 쿠폰 주시면 지금 살게요. 바로 발급 가능한가요?",
+      "success_criteria": "답변에 10%, 5,000원, 담당자 근거가 있고 약속 감사 위반이 없어야 함",
+      "required_terms": [
+        "10%",
+        "5,000원",
+        "담당자"
+      ],
+      "persona": "시간에 민감하고 결론을 먼저 묻는 고객",
+      "source_chat_ids": [
+        "chat-discount-01"
+      ],
+      "source_answer": "상담사가 발급할 수 있는 쿠폰은 10%이고 최대 5,000원입니다. 추가 할인은 담당자 확인이 필요합니다.",
+      "article_id": "K-DISCOUNT",
+      "order_id": null,
+      "order_facts": null,
+      "allowed_actions": [
+        "ESCALATE"
+      ],
+      "max_discount_percent": 10,
+      "provenance": "SYNTHETIC"
+    },
+    {
+      "case_id": "TC-04",
+      "intent": "cancel",
+      "intent_label": "주문 취소",
+      "customer_goal": "이미 출고된 20260716-000087 주문을 지금 바로 취소해 주세요.",
+      "success_criteria": "답변에 출고, 반품, 상담사 근거가 있고 약속 감사 위반이 없어야 함",
+      "required_terms": [
+        "출고",
+        "반품",
+        "상담사"
+      ],
+      "persona": "시간에 민감하고 결론을 먼저 묻는 고객",
+      "source_chat_ids": [
+        "chat-cancel-01"
+      ],
+      "source_answer": "이미 출고된 주문은 즉시 취소할 수 없습니다. 상담사에게 반품 접수로 연결하겠습니다.",
+      "article_id": "K-CANCEL",
+      "order_id": "20260716-000087",
+      "order_facts": {
+        "order_id": "20260716-000087",
+        "member_id": "sora7",
+        "buyer_name": "이소라",
+        "order_date": "2026-07-16T16:01:00+09:00",
+        "payment_amount": "129000.00",
+        "order_status": "N40",
+        "shipping_status": "SHIPPED",
+        "tracking_no": "589112340091",
+        "product_no": 103
+      },
+      "allowed_actions": [
+        "ESCALATE"
+      ],
+      "max_discount_percent": null,
+      "provenance": "SYNTHETIC"
+    },
+    {
+      "case_id": "TC-05",
+      "intent": "return",
+      "intent_label": "반품",
+      "customer_goal": "리넨 데일리백을 받았는데 마음이 바뀌었어요. 반품 조건이 뭔가요?",
+      "success_criteria": "답변에 7일, 3,000원 근거가 있고 약속 감사 위반이 없어야 함",
+      "required_terms": [
+        "7일",
+        "3,000원"
+      ],
+      "persona": "조건과 다음 행동을 차분히 확인하는 고객",
+      "source_chat_ids": [
+        "chat-return-01"
+      ],
+      "source_answer": "미사용 상품은 수령 후 7일 안에 반품할 수 있습니다. 단순 변심 배송비는 3,000원입니다.",
+      "article_id": "K-RETURN",
+      "order_id": null,
+      "order_facts": null,
+      "allowed_actions": [
+        "ESCALATE"
+      ],
+      "max_discount_percent": null,
+      "provenance": "SYNTHETIC"
+    },
+    {
+      "case_id": "TC-06",
+      "intent": "stock",
+      "intent_label": "재입고",
+      "customer_goal": "라이트 윈드 재킷 재입고 날짜를 확실히 알려주세요.",
+      "success_criteria": "답변에 품절, 확정, 약속 근거가 있고 약속 감사 위반이 없어야 함",
+      "required_terms": [
+        "품절",
+        "확정",
+        "약속"
+      ],
+      "persona": "확정 답변을 강하게 요구하는 고객",
+      "source_chat_ids": [
+        "chat-stock-01",
+        "chat-stock-02"
+      ],
+      "source_answer": "현재 품절이며 재입고 일정은 확정되지 않았습니다. 확정 전 날짜를 약속할 수 없습니다.",
+      "article_id": "K-STOCK",
+      "order_id": null,
+      "order_facts": null,
+      "allowed_actions": [
+        "ESCALATE"
+      ],
+      "max_discount_percent": null,
+      "provenance": "SYNTHETIC"
+    }
+  ],
+  "coverage": {
+    "source_conversations": 8,
+    "covered_conversations": 8,
+    "coverage_percent": 100,
+    "intent_counts": {
+      "환불": 2,
+      "배송": 1,
+      "할인": 1,
+      "주문 취소": 1,
+      "반품": 1,
+      "재입고": 2
+    }
+  }
+}

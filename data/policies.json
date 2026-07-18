@@ -1,0 +1,87 @@
+[
+  {
+    "topic": "return_fee",
+    "keywords": [
+      "반품",
+      "배송비"
+    ],
+    "fact": "단순변심 반품 배송비는 편도 3,000원 고객 부담",
+    "source": "cafe24_products.csv > 교환/반품 안내"
+  },
+  {
+    "topic": "return_window",
+    "keywords": [
+      "반품",
+      "7일",
+      "기한"
+    ],
+    "fact": "단순변심 반품은 수령 후 7일 이내",
+    "source": "cafe24_products.csv > 교환/반품 안내"
+  },
+  {
+    "topic": "free_shipping",
+    "keywords": [
+      "무료배송",
+      "배송비"
+    ],
+    "fact": "30,000원 이상 무료배송, 미만 3,000원",
+    "source": "cafe24_products.csv > 상품 배송 안내"
+  },
+  {
+    "topic": "shipping_cutoff",
+    "keywords": [
+      "당일 출고",
+      "출고",
+      "오후 2시"
+    ],
+    "fact": "평일 오후 2시 이전 결제 건만 당일 출고",
+    "source": "cafe24_products.csv > 상품 배송 안내"
+  },
+  {
+    "topic": "coupon_first",
+    "keywords": [
+      "첫 구매",
+      "쿠폰",
+      "10%"
+    ],
+    "fact": "첫 구매 쿠폰은 10% 할인, 30,000원 이상 주문만, 중복 불가",
+    "source": "knowledge_articles.json > 쿠폰 안내"
+  },
+  {
+    "topic": "restock",
+    "keywords": [
+      "재입고",
+      "입고"
+    ],
+    "fact": "재입고 일정은 확정 전 안내 금지",
+    "source": "knowledge_articles.json > 재입고 안내"
+  },
+  {
+    "topic": "custom_no_return",
+    "keywords": [
+      "주문제작",
+      "자수",
+      "반품"
+    ],
+    "fact": "주문제작 상품은 제작 착수 후 취소와 반품 불가",
+    "source": "cafe24_products.csv > GB-005 교환/반품 안내"
+  },
+  {
+    "topic": "exchange_fee",
+    "keywords": [
+      "교환",
+      "배송비"
+    ],
+    "fact": "옵션 교환 배송비는 왕복 6,000원 고객 부담",
+    "source": "knowledge_articles.json > 교환 안내"
+  },
+  {
+    "topic": "address_change",
+    "keywords": [
+      "배송지",
+      "변경"
+    ],
+    "fact": "배송지 변경은 송장 출력 전까지만 가능",
+    "source": "knowledge_articles.json > 배송지 변경 안내"
+  }
+]

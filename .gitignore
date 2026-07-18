@@ -1,0 +1,15 @@
+# 비공개: 대회 전략, 리서치, 심사 로그, 스크린샷
+context/
+evidence/
+logs/
+PREP.md
+AGENTS.md
+out/
+.claude/
+.codex/
+.gjc/
+
+# 파이썬
+__pycache__/
+*.pyc
+.DS_Store

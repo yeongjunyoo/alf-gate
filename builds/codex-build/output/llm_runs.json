@@ -1,0 +1,67 @@
+{
+  "provenance": "SYNTHETIC",
+  "command": "claude -p --max-turns 1 --model sonnet",
+  "fallback_model": "haiku",
+  "runs": [
+    {
+      "call": "llm_customer",
+      "status": "failed",
+      "model": "sonnet",
+      "elapsed_seconds": 2.43,
+      "reason": "Claude 세션 한도"
+    },
+    {
+      "call": "llm_customer",
+      "status": "failed",
+      "model": "haiku",
+      "elapsed_seconds": 2.5,
+      "reason": "Claude 세션 한도"
+    },
+    {
+      "call": "llm_customer",
+      "status": "local_fallback",
+      "model": "none",
+      "reason": "sonnet과 haiku 호출 실패"
+    },
+    {
+      "call": "llm_bot_before",
+      "status": "failed",
+      "model": "sonnet",
+      "elapsed_seconds": 2.7,
+      "reason": "Claude 세션 한도"
+    },
+    {
+      "call": "llm_bot_before",
+      "status": "failed",
+      "model": "haiku",
+      "elapsed_seconds": 2.18,
+      "reason": "Claude 세션 한도"
+    },
+    {
+      "call": "llm_bot_before",
+      "status": "local_fallback",
+      "model": "none",
+      "reason": "sonnet과 haiku 호출 실패"
+    },
+    {
+      "call": "llm_bot_candidate",
+      "status": "failed",
+      "model": "sonnet",
+      "elapsed_seconds": 2.12,
+      "reason": "Claude 세션 한도"
+    },
+    {
+      "call": "llm_bot_candidate",
+      "status": "failed",
+      "model": "haiku",
+      "elapsed_seconds": 2.48,
+      "reason": "Claude 세션 한도"
+    },
+    {
+      "call": "llm_bot_candidate",
+      "status": "local_fallback",
+      "model": "none",
+      "reason": "sonnet과 haiku 호출 실패"
+    }
+  ]
+}

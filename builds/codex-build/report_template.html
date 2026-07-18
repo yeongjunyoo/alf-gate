@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>ALF 세팅 게이트 리포트</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --ink-soft: #4d5965;
+      --paper: #f7f8f5;
+      --white: #ffffff;
+      --line: #cfd6d5;
+      --teal: #087f75;
+      --teal-soft: #d8efea;
+      --red: #c43a4a;
+      --red-soft: #f8e1e4;
+      --amber: #c47b13;
+      --amber-soft: #f7ead2;
+      --blue: #326b9b;
+      --display: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --body: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(23, 33, 43, 0.028) 1px, transparent 1px),
+        var(--paper);
+      background-size: 100% 32px;
+      font-family: var(--body);
+      line-height: 1.55;
+      word-break: keep-all;
+    }
+    a { color: inherit; }
+    button { font: inherit; }
+    .shell { width: min(1180px, calc(100% - 36px)); margin: 0 auto; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(207, 214, 213, 0.85);
+      background: rgba(247, 248, 245, 0.92);
+      backdrop-filter: blur(14px);
+    }
+    .topbar-inner {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+    .brand-mark {
+      width: 29px;
+      height: 29px;
+      border: 7px solid var(--ink);
+      border-right-color: var(--teal);
+      transform: rotate(45deg);
+    }
+    .nav { display: flex; gap: 20px; font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+    .nav a { padding: 20px 0; text-decoration: none; border-bottom: 2px solid transparent; }
+    .nav a:hover { border-bottom-color: var(--teal); color: var(--ink); }
+    .synthetic {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 8px;
+      border: 1px solid var(--amber);
+      color: #865008;
+      background: var(--amber-soft);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+    main { padding: 62px 0 90px; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 330px;
+      gap: 66px;
+      align-items: end;
+      padding: 20px 0 60px;
+    }
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--teal);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 770px;
+      margin-bottom: 20px;
+      font-family: var(--display);
+      font-size: clamp(42px, 6.7vw, 84px);
+      line-height: 0.98;
+      letter-spacing: -0.065em;
+      font-weight: 900;
+    }
+    .hero-copy { max-width: 700px; margin: 0; color: var(--ink-soft); font-size: 17px; }
+    .gate-stamp {
+      min-height: 260px;
+      display: grid;
+      align-content: space-between;
+      padding: 24px;
+      border: 2px solid var(--red);
+      background: var(--red-soft);
+      box-shadow: 12px 12px 0 var(--ink);
+    }
+    .gate-stamp .label {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: #892234;
+    }
+    .gate-stamp strong {
+      display: block;
+      font-family: var(--mono);
+      font-size: 56px;
+      line-height: 0.9;
+      color: var(--red);
+      letter-spacing: -0.07em;
+    }
+    .gate-stamp p { margin: 0; font-size: 13px; color: #6e2a35; }
+    .rail {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid var(--ink);
+      background: var(--white);
+      box-shadow: 0 18px 55px rgba(23, 33, 43, 0.10);
+      overflow: hidden;
+    }
+    .rail::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 4px;
+      width: 75%;
+      height: 4px;
+      background: var(--teal);
+      transform-origin: left;
+      animation: rail-sweep 900ms ease-out both;
+    }
+    .rail::after {
+      content: "";
+      position: absolute;
+      left: 75%;
+      right: 0;
+      top: 4px;
+      height: 4px;
+      background: var(--red);
+    }
+    @keyframes rail-sweep {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+    .rail-step { min-height: 146px; padding: 27px 22px 20px; border-right: 1px solid var(--line); }
+    .rail-step:last-child { border-right: 0; }
+    .rail-index { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
+    .rail-step h2 { margin: 13px 0 4px; font-size: 18px; letter-spacing: -0.03em; }
+    .rail-step p { margin: 0; color: var(--ink-soft); font-size: 13px; }
+    .rail-step.is-stop { background: linear-gradient(135deg, var(--red-soft), #fff 70%); }
+    .rail-step.is-stop h2 { color: var(--red); }
+    .section { padding-top: 88px; scroll-margin-top: 70px; }
+    .section-head {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 32px;
+      padding-bottom: 25px;
+      border-bottom: 1px solid var(--ink);
+    }
+    .section-kicker {
+      color: var(--teal);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+    .section-head h2 { margin: 0; font-size: clamp(27px, 4vw, 46px); line-height: 1.08; letter-spacing: -0.05em; }
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      margin-top: 30px;
+      border: 1px solid var(--ink);
+      background: var(--ink);
+    }
+    .version-panel { padding: 29px; background: var(--white); }
+    .version-panel.after { background: #fff8f8; }
+    .version-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    .version-title h3 { margin: 0; font-size: 16px; }
+    .status {
+      padding: 3px 8px;
+      border: 1px solid currentColor;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .status.pass { color: var(--teal); background: var(--teal-soft); }
+    .status.hold { color: var(--red); background: var(--red-soft); }
+    .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding-top: 25px; }
+    .metric span { display: block; margin-bottom: 7px; color: var(--ink-soft); font-size: 12px; }
+    .metric strong {
+      font-family: var(--mono);
+      font-size: clamp(25px, 4vw, 43px);
+      line-height: 1;
+      letter-spacing: -0.08em;
+    }
+    .bars { margin-top: 26px; padding-top: 24px; border-top: 1px solid var(--line); }
+    .bar-line { display: grid; grid-template-columns: 82px 1fr 44px; align-items: center; gap: 13px; font-size: 12px; }
+    .bar-track { height: 10px; background: #e9eded; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--teal); }
+    .after .bar-fill { background: var(--red); }
+    .bar-line strong { font-family: var(--mono); text-align: right; }
+    .delta-callout {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
+      align-items: center;
+      margin-top: 26px;
+      padding: 22px 24px;
+      border-left: 5px solid var(--red);
+      background: var(--red-soft);
+    }
+    .delta-callout strong { font-family: var(--mono); font-size: 35px; color: var(--red); letter-spacing: -0.06em; }
+    .delta-callout p { margin: 0; font-size: 14px; }
+    .table-wrap { margin-top: 28px; overflow-x: auto; border: 1px solid var(--ink); background: var(--white); }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; font-size: 14px; }
+    th, td { padding: 15px 17px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--ink-soft); background: #edf0ef; font-family: var(--mono); font-size: 11px; }
+    tr:last-child td { border-bottom: 0; }
+    code { font-family: var(--mono); font-size: 12px; background: #eef1f0; padding: 2px 5px; }
+    .filters { display: flex; gap: 8px; margin: 28px 0 18px; }
+    .filter {
+      min-height: 39px;
+      padding: 7px 13px;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      background: transparent;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .filter:hover, .filter[aria-pressed="true"] { color: var(--white); background: var(--ink); }
+    .case-list { display: grid; gap: 12px; }
+    .case-card { border: 1px solid var(--ink); background: var(--white); }
+    .case-card[hidden] { display: none; }
+    .case-card summary {
+      display: grid;
+      grid-template-columns: 82px 140px 1fr auto;
+      gap: 16px;
+      align-items: center;
+      min-height: 76px;
+      padding: 15px 18px;
+      cursor: pointer;
+      list-style: none;
+    }
+    .case-card summary::-webkit-details-marker { display: none; }
+    .case-id { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
+    .intent { font-weight: 800; }
+    .goal { color: var(--ink-soft); font-size: 13px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .badges { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+    .badge { padding: 3px 7px; border: 1px solid var(--line); font-size: 11px; font-weight: 800; white-space: nowrap; }
+    .badge.good { color: var(--teal); border-color: var(--teal); background: var(--teal-soft); }
+    .badge.bad { color: var(--red); border-color: var(--red); background: var(--red-soft); }
+    .badge.warn { color: #865008; border-color: var(--amber); background: var(--amber-soft); }
+    .case-body { padding: 22px; border-top: 1px solid var(--line); }
+    .case-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px; }
+    .meta-box { padding: 14px; border-left: 3px solid var(--teal); background: #f0f5f3; }
+    .meta-box span { display: block; margin-bottom: 5px; color: var(--ink-soft); font-family: var(--mono); font-size: 10px; letter-spacing: 0.07em; }
+    .meta-box p { margin: 0; font-size: 13px; }
+    .conversation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .conversation { border: 1px solid var(--line); background: #fafbfa; }
+    .conversation h4 { margin: 0; padding: 11px 14px; border-bottom: 1px solid var(--line); font-size: 12px; }
+    .messages { display: grid; gap: 10px; padding: 13px; }
+    .message { max-width: 92%; padding: 9px 11px; font-size: 12px; line-height: 1.52; }
+    .message.user { justify-self: end; border: 1px solid var(--line); background: var(--white); }
+    .message.alf { justify-self: start; color: #084c47; background: var(--teal-soft); }
+    .violations { display: grid; gap: 8px; margin-top: 16px; }
+    .violation {
+      display: grid;
+      grid-template-columns: 100px 130px 1fr;
+      gap: 12px;
+      padding: 11px 13px;
+      border-left: 4px solid var(--red);
+      background: var(--red-soft);
+      font-size: 12px;
+    }
+    .violation strong { color: var(--red); }
+    .violation code { background: rgba(255, 255, 255, 0.72); }
+    .source-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; margin-top: 28px; }
+    .source-panel { padding: 23px; border: 1px solid var(--ink); background: var(--white); }
+    .source-panel h3 { font-size: 16px; }
+    .source-panel p, .source-panel li { color: var(--ink-soft); font-size: 13px; }
+    .source-panel ul { margin: 0; padding-left: 18px; }
+    footer { padding: 30px 0 50px; border-top: 1px solid var(--line); color: var(--ink-soft); font-family: var(--mono); font-size: 11px; }
+    :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+    @media (max-width: 800px) {
+      .nav { display: none; }
+      .hero { grid-template-columns: 1fr; gap: 30px; }
+      .gate-stamp { min-height: 190px; }
+      .rail { grid-template-columns: 1fr 1fr; }
+      .section-head { grid-template-columns: 1fr; gap: 9px; }
+      .comparison, .conversation-grid, .source-grid, .case-meta { grid-template-columns: 1fr; }
+      .case-card summary { grid-template-columns: 70px 90px 1fr; }
+      .case-card .badges { grid-column: 1 / -1; justify-content: flex-start; }
+    }
+    @media (max-width: 520px) {
+      .shell { width: min(100% - 22px, 1180px); }
+      main { padding-top: 35px; }
+      h1 { font-size: 43px; }
+      .rail { grid-template-columns: 1fr; }
+      .metric-row { grid-template-columns: 1fr; }
+      .delta-callout { grid-template-columns: 1fr; }
+      .case-card summary { grid-template-columns: 64px 1fr; }
+      .case-card .goal { grid-column: 1 / -1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .rail::before { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span>ALF 세팅 게이트</div>
+      <nav class="nav" aria-label="리포트 구역">
+        <a href="#decision">판정</a>
+        <a href="#regression">리그레션</a>
+        <a href="#cases">테스트 케이스</a>
+        <a href="#sources">근거</a>
+      </nav>
+      <span class="synthetic">SYNTHETIC 데모</span>
+    </div>
+  </header>
+  <main class="shell">
+    <section class="hero" id="decision">
+      <div>
+        <p class="eyebrow">KNOWLEDGE CHANGE / AUTOMATIC RUN</p>
+        <h1>이 변경은 상담에 닿기 전에 멈춥니다.</h1>
+        <p class="hero-copy">과거 문의가 시험지가 됩니다. 두 LLM 역할이 대화합니다. 결정론 감사가 약속 위반을 찾고 배포 보류 근거를 남깁니다.</p>
+      </div>
+      <aside class="gate-stamp" aria-label="배포 판정">
+        <span class="label">DEPLOYMENT GATE</span>
+        <strong id="decision-word">HOLD</strong>
+        <p id="decision-copy">변경 지식을 수정한 뒤 같은 케이스를 다시 실행하세요.</p>
+      </aside>
+    </section>
+    <section class="rail" aria-label="실행 과정">
+      <div class="rail-step"><span class="rail-index">01 / INPUT</span><h2>시험지 생성</h2><p id="rail-cases">문의 로그에서 테스트 케이스 생성</p></div>
+      <div class="rail-step"><span class="rail-index">02 / SIMULATE</span><h2>역할 대화</h2><p>LLM 고객과 LLM 봇의 대화 실행</p></div>
+      <div class="rail-step"><span class="rail-index">03 / AUDIT</span><h2>약속 감사</h2><p id="rail-audit">결정론 규칙으로 위반 검출</p></div>
+      <div class="rail-step is-stop"><span class="rail-index">04 / GATE</span><h2>배포 보류</h2><p id="rail-gate">깨진 케이스와 근거 기록</p></div>
+    </section>
+    <section class="section" id="regression">
+      <div class="section-head"><span class="section-kicker">REGRESSION</span><h2>같은 시험지로 변경 전후를 비교했습니다.</h2></div>
+      <div class="comparison">
+        <article class="version-panel before">
+          <div class="version-title"><h3>승인 지식</h3><span class="status pass">PASS</span></div>
+          <div class="metric-row">
+            <div class="metric"><span>안전 해결률</span><strong id="before-rate">0%</strong></div>
+            <div class="metric"><span>해결 케이스</span><strong id="before-resolved">0/0</strong></div>
+            <div class="metric"><span>약속 위반</span><strong id="before-violations">0</strong></div>
+          </div>
+          <div class="bars"><div class="bar-line"><span>안전 해결</span><div class="bar-track"><div class="bar-fill" id="before-bar"></div></div><strong id="before-bar-label">0%</strong></div></div>
+        </article>
+        <article class="version-panel after">
+          <div class="version-title"><h3>배포 후보 지식</h3><span class="status hold">HOLD</span></div>
+          <div class="metric-row">
+            <div class="metric"><span>안전 해결률</span><strong id="after-rate">0%</strong></div>
+            <div class="metric"><span>해결 케이스</span><strong id="after-resolved">0/0</strong></div>
+            <div class="metric"><span>약속 위반</span><strong id="after-violations">0</strong></div>
+          </div>
+          <div class="bars"><div class="bar-line"><span>안전 해결</span><div class="bar-track"><div class="bar-fill" id="after-bar"></div></div><strong id="after-bar-label">0%</strong></div></div>
+        </article>
+      </div>
+      <div class="delta-callout"><strong id="delta-rate">0%p</strong><p id="delta-copy">리그레션 변화가 계산됩니다.</p></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>케이스</th><th>문의 유형</th><th>변경 전</th><th>변경 후</th><th>새 위반</th></tr></thead>
+          <tbody id="regression-body"></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="section" id="cases">
+      <div class="section-head"><span class="section-kicker">AUTO GENERATED CASES</span><h2>사람이 쓰던 빈 시험지를 문의 로그가 채웠습니다.</h2></div>
+      <div class="filters" role="group" aria-label="케이스 필터">
+        <button class="filter" type="button" data-filter="all" aria-pressed="true">전체</button>
+        <button class="filter" type="button" data-filter="broken" aria-pressed="false">깨진 케이스</button>
+        <button class="filter" type="button" data-filter="violated" aria-pressed="false">약속 위반</button>
+      </div>
+      <div class="case-list" id="case-list"></div>
+    </section>
+    <section class="section" id="sources">
+      <div class="section-head"><span class="section-kicker">EVIDENCE</span><h2>판정 근거와 한계를 함께 남깁니다.</h2></div>
+      <div class="source-grid">
+        <article class="source-panel">
+          <h3>공개 스키마</h3>
+          <ul>
+            <li><a href="https://developers.channel.io/docs/send-a-message-to-a-userchat-1">채널톡 Message Object</a>의 id, chatId, personType, plainText, createdAt 사용</li>
+            <li><a href="https://developers.cafe24.com/docs/en/api/admin/">카페24 Admin API</a>의 product_no, product_code, order_id, shipping_status 사용</li>
+            <li><a href="https://docs.channel.io/help/ko/articles/ALF-%ED%85%8C%EC%8A%A4%ED%8A%B8-bffe077d">채널톡 ALF 테스트</a>의 고객 목표, 성공 기준, 페르소나 구조 반영</li>
+          </ul>
+        </article>
+        <article class="source-panel">
+          <h3>정직한 한계</h3>
+          <p>모든 주문, 상품, 문의는 SYNTHETIC입니다. 실제 채널톡이나 카페24 계정에 쓰지 않습니다. 결정론 규칙은 알려진 네 가지 약속 위반만 찾습니다. 실서비스에서는 정책 승인 이력, 권한 매트릭스, 실제 태스크 결과를 추가로 연결해야 합니다.</p>
+          <p id="llm-note">LLM 실행 정보를 확인 중입니다.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+  <footer><div class="shell"><span id="generated-at"></span> / Python stdlib / 단일 자체 포함 HTML</div></footer>
+  <script id="report-data" type="application/json">__REPORT_DATA__</script>
+  <script>
+    const data = JSON.parse(document.getElementById("report-data").textContent);
+    const byId = function(id) { return document.getElementById(id); };
+    const esc = function(value) {
+      return String(value == null ? "" : value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    };
+    const yesNo = function(value) {
+      return value ? '<span class="badge good">해결</span>' : '<span class="badge bad">실패</span>';
+    };
+    byId("decision-word").textContent = data.regression.decision;
+    byId("decision-copy").textContent = data.regression.recommendation;
+    byId("rail-cases").textContent = data.before.case_count + "개 케이스 / 로그 " + data.coverage.coverage_percent + "% 커버";
+    byId("rail-audit").textContent = data.after.violation_count + "건 위반 / LLM 판단 비의존";
+    byId("rail-gate").textContent = data.regression.broken_cases.length + "개 리그레션 차단";
+    ["before", "after"].forEach(function(version) {
+      const summary = data[version];
+      byId(version + "-rate").textContent = summary.resolution_rate + "%";
+      byId(version + "-resolved").textContent = summary.resolved_count + "/" + summary.case_count;
+      byId(version + "-violations").textContent = String(summary.violation_count);
+      byId(version + "-bar").style.width = summary.resolution_rate + "%";
+      byId(version + "-bar-label").textContent = summary.resolution_rate + "%";
+    });
+    const delta = data.regression.delta_percentage_points;
+    byId("delta-rate").textContent = (delta > 0 ? "+" : "") + delta + "%p";
+    byId("delta-copy").textContent = "해결률이 " + Math.abs(delta) + "%p 변했습니다. 새 중대 위반 " + data.regression.critical_violation_count + "건을 찾았습니다.";
+    const broken = data.regression.broken_cases;
+    byId("regression-body").innerHTML = broken.length ? broken.map(function(row) {
+      const badges = row.new_violations.map(function(v) {
+        return '<span class="badge bad">' + esc(v.label) + "</span>";
+      }).join(" ");
+      return "<tr><td><code>" + esc(row.case_id) + "</code></td><td>" + esc(row.intent_label) +
+        "</td><td>" + yesNo(row.before_resolved) + "</td><td>" + yesNo(row.after_resolved) +
+        "</td><td>" + (badges || "없음") + "</td></tr>";
+    }).join("") : '<tr><td colspan="5">깨진 케이스가 없습니다.</td></tr>';
+
+    function messageMarkup(messages) {
+      return messages.map(function(message) {
+        const kind = message.personType === "alf" ? "alf" : "user";
+        return '<div class="message ' + kind + '">' + esc(message.plainText) + "</div>";
+      }).join("");
+    }
+    function violationsMarkup(item) {
+      if (!item.after.violations.length) {
+        return '<div class="violations"><div class="meta-box"><p>새 약속 위반이 없습니다.</p></div></div>';
+      }
+      return '<div class="violations">' + item.after.violations.map(function(v) {
+        return '<div class="violation"><strong>' + esc(v.label) + "</strong><code>" +
+          esc(v.evidence) + "</code><span>" + esc(v.reason) + "</span></div>";
+      }).join("") + "</div>";
+    }
+    byId("case-list").innerHTML = data.cases.map(function(item) {
+      const isBroken = item.before.resolved && !item.after.resolved;
+      const hasViolation = item.after.violation_count > 0;
+      const qualityBadge = item.after.cx_quality_pass ? '<span class="badge warn">CX 품질 통과</span>' : "";
+      const safetyBadge = hasViolation
+        ? '<span class="badge bad">위반 ' + item.after.violation_count + "</span>"
+        : '<span class="badge good">안전</span>';
+      return '<details class="case-card" data-broken="' + isBroken + '" data-violated="' + hasViolation + '">' +
+        "<summary><span class=\"case-id\">" + esc(item.case_id) + "</span><span class=\"intent\">" +
+        esc(item.intent_label) + "</span><span class=\"goal\">" + esc(item.customer_goal) +
+        '</span><span class="badges">' + qualityBadge + safetyBadge + "</span></summary>" +
+        '<div class="case-body"><div class="case-meta"><div class="meta-box"><span>ALF 고객 페르소나</span><p>' +
+        esc(item.persona) + '</p></div><div class="meta-box"><span>ALF 성공 기준</span><p>' +
+        esc(item.success_criteria) + '</p></div></div><div class="conversation-grid">' +
+        '<div class="conversation"><h4>승인 지식 대화</h4><div class="messages">' +
+        messageMarkup(item.before_messages) + '</div></div><div class="conversation"><h4>배포 후보 대화</h4><div class="messages">' +
+        messageMarkup(item.after_messages) + "</div></div></div>" + violationsMarkup(item) + "</div></details>";
+    }).join("");
+    document.querySelectorAll(".filter").forEach(function(button) {
+      button.addEventListener("click", function() {
+        document.querySelectorAll(".filter").forEach(function(item) {
+          item.setAttribute("aria-pressed", "false");
+        });
+        button.setAttribute("aria-pressed", "true");
+        const filter = button.dataset.filter;
+        document.querySelectorAll(".case-card").forEach(function(card) {
+          card.hidden = filter === "broken"
+            ? card.dataset.broken !== "true"
+            : filter === "violated"
+              ? card.dataset.violated !== "true"
+              : false;
+        });
+      });
+    });
+    const models = data.llm.successful_models;
+    byId("llm-note").textContent = models.length
+      ? "LLM 역할 호출은 " + models.join(", ") + " 모델로 완료했습니다. 채점은 결정론 규칙을 우선했습니다."
+      : "LLM 호출은 로컬 폴백으로 대체했습니다. 채점과 리포트는 동일하게 완주했습니다.";
+    byId("generated-at").textContent = "생성 시각 " + data.generated_at;
+  </script>
+</body>
+</html>

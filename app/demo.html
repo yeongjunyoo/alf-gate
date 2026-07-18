@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>ALF-GATE 라이브 데모</title>
+<style>
+:root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--bg:#f6f7fb;--card:#fff;--indigo:#4f46e5;--indigo-soft:#eef2ff;--green:#059669;--green-soft:#ecfdf5;--amber:#d97706;--amber-soft:#fffbeb;--red:#dc2626;--red-soft:#fef2f2}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Apple SD Gothic Neo","Pretendard",-apple-system,"Malgun Gothic",sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+header{background:#fff;border-bottom:1px solid var(--line);padding:14px 24px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:10}
+.logo{font-weight:800;font-size:18px;letter-spacing:-.3px}
+.logo span{color:var(--indigo)}
+.tagline{color:var(--muted);font-size:13px}
+.badge{margin-left:auto;font-size:11px;font-weight:700;color:var(--amber);background:var(--amber-soft);border:1px solid #fde68a;padding:3px 8px;border-radius:20px}
+.report-link{font-size:12px;font-weight:600;color:var(--indigo);text-decoration:none;border:1px solid var(--indigo);padding:5px 12px;border-radius:8px}
+.layout{display:grid;grid-template-columns:260px 1fr;gap:18px;padding:18px 24px;max-width:1500px;margin:0 auto}
+.rail{position:sticky;top:76px;align-self:start;display:flex;flex-direction:column;gap:10px}
+.stage-btn{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;text-align:left;font-size:13px;font-weight:600;color:var(--ink);width:100%}
+.stage-btn:hover{border-color:var(--indigo)}
+.stage-btn:disabled{opacity:.45;cursor:default}
+.stage-btn .num{width:22px;height:22px;border-radius:50%;background:var(--indigo-soft);color:var(--indigo);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.stage-btn.done .num{background:var(--green-soft);color:var(--green)}
+.stage-btn.running .num{background:var(--indigo);color:#fff;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{opacity:.5}}
+.tiles{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.tiles h3{font-size:11px;color:var(--muted);font-weight:700;margin-bottom:8px}
+.tile-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
+.tile-row b{font-variant-numeric:tabular-nums}
+.delta{font-size:20px;font-weight:800;color:var(--red)}
+#feed{display:flex;flex-direction:column;gap:14px;min-width:0}
+.stage-head{display:flex;align-items:center;gap:10px;margin-top:6px}
+.stage-head .t{font-weight:800;font-size:15px}
+.stage-head .d{color:var(--muted);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.case{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.case.running{border-color:var(--indigo);box-shadow:0 0 0 3px var(--indigo-soft)}
+.case-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cid{font-size:11px;font-weight:800;color:var(--indigo);background:var(--indigo-soft);padding:2px 7px;border-radius:6px}
+.cluster{font-size:11px;color:var(--muted)}
+.goal{font-size:13px;font-weight:600;line-height:1.45}
+.crit{font-size:11.5px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.status-dot{margin-left:auto;width:9px;height:9px;border-radius:50%;background:var(--line);flex:none}
+.case.running .status-dot{background:var(--indigo);animation:pulse 1.2s infinite}
+.case.o-pass{border-left:3px solid var(--green)}
+.case.o-pass .status-dot{background:var(--green)}
+.case.o-warn{border-left:3px solid var(--amber)}
+.case.o-warn .status-dot{background:var(--amber)}
+.case.o-fail,.case.o-error{border-left:3px solid var(--red)}
+.case.o-fail .status-dot,.case.o-error .status-dot{background:var(--red)}
+.chat{display:flex;flex-direction:column;gap:6px;margin-top:2px}
+.bubble{max-width:88%;padding:8px 11px;border-radius:12px;font-size:12.5px;line-height:1.55;animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.bubble.customer{align-self:flex-start;background:#f3f4f6;border-bottom-left-radius:4px}
+.bubble.agent{align-self:flex-end;background:var(--indigo-soft);border-bottom-right-radius:4px}
+.typing{align-self:flex-start;color:var(--muted);font-size:11px;padding:2px 4px}
+.verdict{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:8px}
+.chip{font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px}
+.chip.pass{background:var(--green-soft);color:var(--green)}
+.chip.warn{background:var(--amber-soft);color:var(--amber)}
+.chip.fail,.chip.error{background:var(--red-soft);color:var(--red)}
+.cx{font-size:12px;color:var(--muted)}
+.killer{font-size:11px;font-weight:800;color:var(--red);background:var(--red-soft);border:1px solid #fecaca;padding:3px 9px;border-radius:20px}
+.reason{font-size:12px;color:var(--muted);line-height:1.5}
+.violation{background:var(--red-soft);border:1px solid #fecaca;border-radius:10px;padding:10px;font-size:12px;line-height:1.55}
+.violation .vt{font-weight:800;color:var(--red);margin-bottom:4px}
+.violation .q{border-left:3px solid #fca5a5;padding-left:8px;margin:4px 0;color:#7f1d1d}
+.violation .src{color:var(--muted)}
+.wide{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.coverage-bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:8px 0}
+.coverage-bar i{display:block;height:100%;background:var(--indigo);border-radius:6px;transition:width .8s ease}
+.clusters{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.cl{font-size:12px;background:var(--indigo-soft);color:var(--indigo);font-weight:600;padding:4px 10px;border-radius:20px}
+.cl.un{background:var(--amber-soft);color:var(--amber)}
+.changecard{border-color:#fde68a;background:var(--amber-soft)}
+.regbanner{border:2px solid var(--red);background:var(--red-soft);border-radius:14px;padding:18px}
+.regbanner.ok{border-color:var(--green);background:var(--green-soft)}
+.regbanner.ok .big,.regbanner.ok .rec{color:var(--green)}
+.cov-row{display:flex;align-items:baseline;gap:12px}
+.cov-num{font-size:34px;font-weight:800;color:var(--indigo);font-variant-numeric:tabular-nums}
+.cov-sub{font-size:13px;color:var(--muted)}
+.filerow{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bg);font-size:13px}
+.filerow:last-child{border-bottom:none}
+.fcheck{width:16px;height:16px;border-radius:50%;background:var(--green-soft);flex:none;position:relative}
+.fcheck::after{content:"";position:absolute;left:5px;top:2.5px;width:4px;height:8px;border:solid var(--green);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.fname{font-weight:700}
+.fkind{color:var(--muted);font-size:12px}
+.frows{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--muted);font-size:12px}
+.schema-ok{font-size:11px;font-weight:800;color:var(--green);background:var(--green-soft);padding:2px 8px;border-radius:12px}
+.diag{border:2px solid var(--indigo);background:var(--indigo-soft);border-radius:14px;padding:16px}
+.diag .dt{font-weight:800;color:var(--indigo);margin-bottom:6px}
+.diag .body{font-size:13px;line-height:1.6}
+.diag .patch{background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:12.5px;margin-top:8px;line-height:1.6}
+.regbanner .big{font-size:26px;font-weight:800;color:var(--red)}
+.regbanner .rec{font-size:15px;font-weight:800;margin-top:6px}
+.broken{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.broken .b{font-size:12.5px;background:#fff;border:1px solid #fecaca;border-radius:8px;padding:8px 10px}
+.actions{margin-top:12px;display:flex;gap:8px}
+.actions button{border:none;border-radius:8px;padding:9px 16px;font-weight:700;font-size:13px;cursor:pointer}
+.approve{background:var(--ink);color:#fff}
+.hold{background:#fff;border:1px solid var(--line) !important}
+#toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transition:.25s;pointer-events:none}
+#toast.show{opacity:1}
+.err{color:var(--red);font-size:13px;font-weight:600}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">ALF<span>-GATE</span></div>
+  <div class="tagline">ALF 테스트의 빈 시험지를 로그로 채우는 세팅 게이트, 그린백 스토어 라이브 실행</div>
+  <span class="badge">SYNTHETIC 데이터</span>
+  <a class="report-link" href="/report" target="_blank">전체 리포트</a>
+  <button class="report-link" style="cursor:pointer;background:#fff" onclick="fetch('/reset',{method:'POST'}).then(r=>r.ok?location.reload():toast('실행 중에는 초기화 불가'))">초기화</button>
+</header>
+<div class="layout">
+  <div class="rail">
+    <button class="stage-btn" id="btn-ingest" onclick="act('ingest')"><span class="num">0</span>데이터 연결</button>
+    <button class="stage-btn" id="btn-gen" onclick="act('gen')"><span class="num">1</span>케이스 생성</button>
+    <button class="stage-btn" id="btn-baseline" onclick="act('baseline')"><span class="num">2</span>시뮬레이션과 감사</button>
+    <button class="stage-btn" id="btn-change" onclick="act('change')"><span class="num">3</span>아티클 변경</button>
+    <button class="stage-btn" id="btn-candidate" onclick="act('candidate')"><span class="num">4</span>자동 재검증</button>
+    <button class="stage-btn" id="btn-report" onclick="act('report')"><span class="num">5</span>리포트 갱신</button>
+    <div class="tiles" id="tiles" style="display:none">
+      <h3 id="tiles-label">실행 요약</h3>
+      <div class="tile-row"><span>해결률</span><b id="t-res">-</b></div>
+      <div class="tile-row"><span>통과 / 주의 / 실패</span><b id="t-pwf">-</b></div>
+      <div class="tile-row"><span>약속 위반</span><b id="t-vio">-</b></div>
+    </div>
+    <div class="tiles" id="delta-box" style="display:none">
+      <h3>해결률 변화</h3>
+      <div class="delta" id="t-delta">-</div>
+    </div>
+  </div>
+  <div id="feed"></div>
+</div>
+<div id="toast"></div>
+<script>
+let since = 0;
+const feed = document.getElementById("feed");
+const caseEls = {};
+
+function el(tag, cls, html) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (html !== undefined) e.innerHTML = html;
+  return e;
+}
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+}
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2200);
+}
+async function act(step) {
+  const r = await fetch("/action", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({step})});
+  if (!r.ok) { const j = await r.json().catch(()=>({})); toast(j.error || "실행 불가"); }
+}
+function setStage(step, state) {
+  const b = document.getElementById("btn-" + step);
+  if (!b) return;
+  b.classList.remove("running", "done");
+  if (state) b.classList.add(state);
+}
+let cardsWrap = null;
+function ensureCards() {
+  if (!cardsWrap) { cardsWrap = el("div", "cards"); feed.appendChild(cardsWrap); }
+  return cardsWrap;
+}
+function caseCard(c) {
+  const d = el("div", "case");
+  d.id = "case-" + c.id;
+  const p = c.persona || {};
+  d.title = "성공 기준: " + (c.successCriteria || "");
+  d.innerHTML =
+    '<div class="case-head"><span class="cid">' + esc(c.id) + '</span><span class="cluster">' + esc(p.name || "") + (p.name ? ", " : "") + esc(c.cluster || "") + '</span><span class="status-dot"></span></div>' +
+    '<div class="goal">' + esc(c.goal) + '</div>' +
+    '<div class="crit">' + esc(c.successCriteria || "") + '</div>' +
+    '<div class="chat"></div><div class="verdict-slot"></div>';
+  caseEls[c.id] = d;
+  ensureCards().appendChild(d);
+  return d;
+}
+function handle(ev) {
+  if (ev.type === "stage_start") {
+    feed.appendChild(el("div", "stage-head", '<span class="t">' + esc(ev.label) + '</span><span class="d">' + esc(ev.detail || "") + '</span>'));
+    cardsWrap = null;
+    setStage(ev.step, "running");
+    if (ev.step === "baseline" || ev.step === "candidate") {
+      document.getElementById("tiles").style.display = "";
+      document.getElementById("tiles-label").textContent = ev.label;
+      for (const id in caseEls) { const c = caseEls[id]; c.querySelector(".chat").innerHTML = ""; c.querySelector(".verdict-slot").innerHTML = ""; }
+    }
+  } else if (ev.type === "stage_done") {
+    setStage(ev.step, "done");
+  } else if (ev.type === "stage_error") {
+    setStage(ev.step, "");
+    feed.appendChild(el("div", "err", "오류: " + esc(ev.error)));
+  } else if (ev.type === "coverage") {
+    const cov = ev.coverage;
+    const w = el("div", "wide");
+    w.innerHTML = '<div class="cov-row"><span class="cov-num">' + cov.coveragePct + '%</span>' +
+      '<span class="cov-sub">상담 ' + cov.totalChats + '건 커버리지</span></div>' +
+      '<div class="coverage-bar"><i style="width:0%"></i></div>' +
+      '<div class="clusters">' +
+      cov.clusters.map(c => '<span class="cl">' + esc(c.name) + " " + c.chatCount + '</span>').join("") +
+      cov.uncovered.map(u => '<span class="cl un">' + esc(u.name) + " " + u.chatCount + '</span>').join("") +
+      '</div>';
+    feed.appendChild(w);
+    requestAnimationFrame(() => { w.querySelector(".coverage-bar i").style.width = cov.coveragePct + "%"; });
+  } else if (ev.type === "case_created") {
+    caseCard(ev.case);
+  } else if (ev.type === "case_start") {
+    let d = caseEls[ev.caseId] || caseCard(ev.case);
+    d.classList.add("running");
+    d.querySelector(".chat").appendChild(el("div", "typing", "대화 중"));
+  } else if (ev.type === "turn") {
+    const d = caseEls[ev.caseId]; if (!d) return;
+    const chat = d.querySelector(".chat");
+    const ty = chat.querySelector(".typing"); if (ty) ty.remove();
+    chat.appendChild(el("div", "bubble " + ev.role, esc(ev.text)));
+    chat.appendChild(el("div", "typing", "대화 중"));
+  } else if (ev.type === "case_done") {
+    const d = caseEls[ev.caseId]; if (!d) return;
+    d.classList.remove("running");
+    const ty = d.querySelector(".typing"); if (ty) ty.remove();
+    const r = ev.result;
+    d.classList.add("o-" + r.outcome);
+    const slot = d.querySelector(".verdict-slot");
+    const viols = (r.audit && r.audit.violations) || [];
+    let html = "";
+    if (viols.length && r.cxScore >= 4) html += '<div class="killer">CX 점수 통과, 감사 실패</div>';
+    if (r.outcome !== "pass" && r.judgeReason) html += '<div class="reason">' + esc(r.judgeReason) + '</div>';
+    for (const v of viols) {
+      html += '<div class="violation"><div class="q">"' + esc(v.botClaim) + '"</div>' +
+        '<div class="src">' + esc(v.typeLabel) + " | " + esc(v.sourceOfTruth) + '</div></div>';
+    }
+    slot.innerHTML = html;
+  } else if (ev.type === "summary") {
+    const s = ev.summary;
+    document.getElementById("t-res").textContent = Math.round(s.resolutionRate * 100) + "%";
+    document.getElementById("t-pwf").textContent = s.passCount + " / " + s.warnCount + " / " + s.failCount;
+    document.getElementById("t-vio").textContent = s.violationCount + "건";
+  } else if (ev.type === "change") {
+    const c = ev.change;
+    feed.appendChild(el("div", "wide changecard", "<b>변경 감지</b><br>" + esc(c.description) + '<br><span style="color:var(--muted);font-size:12px">' + esc(c.editedBy) + " | " + esc(c.at) + "</span>"));
+  } else if (ev.type === "file_detected") {
+    if (!document.getElementById("filelist")) {
+      const holder = el("div", "wide"); holder.id = "filelist"; feed.appendChild(holder);
+    }
+    const row = el("div", "filerow",
+      '<span class="fcheck"></span><span class="fname">' + esc(ev.file) + '</span>' +
+      '<span class="fkind">' + esc(ev.kind) + '</span><span class="frows">' + ev.rows + '</span>');
+    document.getElementById("filelist").appendChild(row);
+  } else if (ev.type === "diagnosis") {
+    const g = ev.diagnosis;
+    const d = el("div", "diag");
+    d.innerHTML = '<div class="dt">AI 원인 진단</div>' +
+      '<div class="body"><b>원인</b> ' + esc(g.rootCause) + "<br><b>제안</b> " + esc(g.proposal) +
+      ' <span style="color:var(--muted)">(대상: ' + esc(ev.articleTitle) + ')</span></div>' +
+      '<div class="patch">' + esc(g.patchedBody) + '</div>' +
+      '<div class="actions"><button class="approve" onclick="act(\'fix\')">제안 승인, 재검증 실행</button>' +
+      '<button class="hold" onclick="toast(\'제안을 기각했습니다\')">기각</button></div>';
+    feed.appendChild(d);
+    d.scrollIntoView({behavior:"smooth", block:"center"});
+  } else if (ev.type === "regression") {
+    const g = ev.regression;
+    const ok = g.recommendation === "publish";
+    const d = el("div", "regbanner" + (ok ? " ok" : ""));
+    const delta = (g.deltaResolutionRate * 100).toFixed(0);
+    document.getElementById("delta-box").style.display = "";
+    document.getElementById("t-delta").textContent = delta + "%p";
+    document.getElementById("t-delta").style.color = ok ? "var(--green)" : "var(--red)";
+    d.innerHTML = '<div class="big">해결률 ' + (ok && delta >= 0 ? "+" : "") + delta + '%p</div>' +
+      '<div style="font-size:13px;color:var(--muted)">' + Math.round(ev.baseSummary.resolutionRate * 100) + "% 에서 " + Math.round(ev.candSummary.resolutionRate * 100) + "% 로</div>" +
+      '<div class="rec">' + esc(g.recommendationLabel) + '</div>' +
+      '<div class="broken">' + g.brokenCases.map(b => '<div class="b"><b>' + esc(b.caseId) + "</b> " + esc(b.before) + " &#8594; " + esc(b.after) + " | " + esc(b.reason) + "</div>").join("") + "</div>" +
+      (ok ? '<div class="actions"><button class="approve" onclick="toast(\'배포 승인이 기록되었습니다 (모의)\')">배포 승인</button></div>'
+          : '<div class="actions"><button class="hold" onclick="toast(\'보류 상태를 유지합니다 (모의)\')">보류 유지</button></div>');
+    feed.appendChild(d);
+    d.scrollIntoView({behavior:"smooth", block:"center"});
+  } else if (ev.type === "report_ready") {
+    toast("전체 리포트가 갱신되었습니다");
+  }
+}
+async function poll() {
+  try {
+    const r = await fetch("/events?since=" + since);
+    const j = await r.json();
+    for (const ev of j.events) { handle(ev); since = ev.seq + 1; }
+  } catch (e) {}
+  setTimeout(poll, 600);
+}
+poll();
+</script>
+</body>
+</html>

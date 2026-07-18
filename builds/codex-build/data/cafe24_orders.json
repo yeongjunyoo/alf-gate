@@ -1,0 +1,41 @@
+{
+  "_meta": {
+    "provenance": "SYNTHETIC",
+    "schema_note": "카페24 Admin API 주문과 배송 필드명 기반 목업"
+  },
+  "orders": [
+    {
+      "order_id": "20260718-000001",
+      "member_id": "mirae21",
+      "buyer_name": "김미래",
+      "order_date": "2026-07-18T08:13:00+09:00",
+      "payment_amount": "49000.00",
+      "order_status": "N10",
+      "shipping_status": "READY",
+      "tracking_no": "",
+      "product_no": 101
+    },
+    {
+      "order_id": "20260717-000114",
+      "member_id": "junseo88",
+      "buyer_name": "박준서",
+      "order_date": "2026-07-17T11:42:00+09:00",
+      "payment_amount": "89000.00",
+      "order_status": "N20",
+      "shipping_status": "READY",
+      "tracking_no": "",
+      "product_no": 102
+    },
+    {
+      "order_id": "20260716-000087",
+      "member_id": "sora7",
+      "buyer_name": "이소라",
+      "order_date": "2026-07-16T16:01:00+09:00",
+      "payment_amount": "129000.00",
+      "order_status": "N40",
+      "shipping_status": "SHIPPED",
+      "tracking_no": "589112340091",
+      "product_no": 103
+    }
+  ]
+}

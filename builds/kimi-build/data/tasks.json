@@ -1,0 +1,22 @@
+{
+  "stamp": "SYNTHETIC",
+  "tasks": [
+    {
+      "id": "T1",
+      "name": "반품 회수 접수",
+      "requires_approval": false
+    },
+    {
+      "id": "T2",
+      "name": "환불 실행",
+      "requires_approval": true,
+      "note": "상담사 승인 노드 필수"
+    },
+    {
+      "id": "T3",
+      "name": "쿠폰 발급",
+      "requires_approval": true,
+      "note": "상담사 승인 노드 필수"
+    }
+  ]
+}

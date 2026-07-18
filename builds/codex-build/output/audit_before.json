@@ -1,0 +1,104 @@
+{
+  "version": "before",
+  "case_count": 6,
+  "resolved_count": 6,
+  "resolution_rate": 100,
+  "cx_quality_pass_count": 6,
+  "violation_count": 0,
+  "violation_by_label": {},
+  "results": [
+    {
+      "case_id": "TC-01",
+      "intent": "refund",
+      "intent_label": "환불",
+      "criteria_pass": true,
+      "criteria_hits": [
+        "환불",
+        "3영업일"
+      ],
+      "cx_quality_pass": true,
+      "resolved": true,
+      "answer": "배송 전 취소가 확인되면 환불은 승인일로부터 3영업일 안에 반영됩니다. 완료 전에는 환불 완료라고 확약하지 않습니다.",
+      "violations": [],
+      "violation_count": 0
+    },
+    {
+      "case_id": "TC-02",
+      "intent": "shipping",
+      "intent_label": "배송",
+      "criteria_pass": true,
+      "criteria_hits": [
+        "상품준비중",
+        "출고 전"
+      ],
+      "cx_quality_pass": true,
+      "resolved": true,
+      "answer": "현재 상품준비중이며 아직 출고 전입니다. 송장 번호는 출고 뒤 등록됩니다.",
+      "violations": [],
+      "violation_count": 0
+    },
+    {
+      "case_id": "TC-03",
+      "intent": "discount",
+      "intent_label": "할인",
+      "criteria_pass": true,
+      "criteria_hits": [
+        "10%",
+        "5,000원",
+        "담당자"
+      ],
+      "cx_quality_pass": true,
+      "resolved": true,
+      "answer": "안내 가능한 할인은 10%이고 최대 5,000원입니다. 추가 할인은 담당자 확인이 필요해 상담사에게 연결하겠습니다.",
+      "violations": [],
+      "violation_count": 0
+    },
+    {
+      "case_id": "TC-04",
+      "intent": "cancel",
+      "intent_label": "주문 취소",
+      "criteria_pass": true,
+      "criteria_hits": [
+        "출고",
+        "반품",
+        "상담사"
+      ],
+      "cx_quality_pass": true,
+      "resolved": true,
+      "answer": "이미 출고된 주문은 즉시 취소할 수 없습니다. 상담사에게 반품 접수로 연결하겠습니다.",
+      "violations": [],
+      "violation_count": 0
+    },
+    {
+      "case_id": "TC-05",
+      "intent": "return",
+      "intent_label": "반품",
+      "criteria_pass": true,
+      "criteria_hits": [
+        "7일",
+        "3,000원"
+      ],
+      "cx_quality_pass": true,
+      "resolved": true,
+      "answer": "미사용 상품은 수령 후 7일 안에 반품할 수 있습니다. 단순 변심 배송비는 3,000원입니다.",
+      "violations": [],
+      "violation_count": 0
+    },
+    {
+      "case_id": "TC-06",
+      "intent": "stock",
+      "intent_label": "재입고",
+      "criteria_pass": true,
+      "criteria_hits": [
+        "품절",
+        "확정",
+        "약속"
+      ],
+      "cx_quality_pass": true,
+      "resolved": true,
+      "answer": "현재 품절이며 재입고 일정은 확정되지 않았습니다. 확정 전 특정 날짜를 약속할 수 없습니다.",
+      "violations": [],
+      "violation_count": 0
+    }
+  ]
+}

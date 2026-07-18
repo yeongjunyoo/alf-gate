@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALF-GATE 리포트</title>
+<style>
+  :root {
+    --indigo: #4f46e5;
+    --indigo-dark: #4338ca;
+    --indigo-soft: #eef2ff;
+    --bg: #f5f6fa;
+    --card: #ffffff;
+    --line: #e5e7eb;
+    --text: #111827;
+    --muted: #6b7280;
+    --green: #059669;
+    --green-soft: #ecfdf5;
+    --amber: #d97706;
+    --amber-soft: #fffbeb;
+    --red: #dc2626;
+    --red-soft: #fef2f2;
+    --orange: #ea580c;
+    --orange-soft: #fff7ed;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  /* 헤더 */
+  header { margin-bottom: 24px; }
+  .brand-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .brand {
+    font-size: 28px; font-weight: 800; letter-spacing: -0.5px; color: var(--indigo-dark);
+  }
+  .badge-synthetic {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+    color: var(--amber); background: var(--amber-soft);
+    border: 1px solid #fcd34d; border-radius: 6px; padding: 3px 8px;
+  }
+  .tagline { font-size: 15px; color: var(--text); margin-top: 6px; }
+  .store-line { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  /* 탭 */
+  .tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--line); margin-bottom: 28px; }
+  .tab-btn {
+    background: none; border: none; cursor: pointer;
+    font: inherit; font-size: 15px; font-weight: 600; color: var(--muted);
+    padding: 12px 20px; margin-bottom: -2px;
+    border-bottom: 2px solid transparent;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--indigo); border-bottom-color: var(--indigo); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* 카드, 섹션 */
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 24px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  }
+  .section-title { font-size: 17px; font-weight: 700; margin-bottom: 16px; }
+  .section-sub { font-size: 13px; color: var(--muted); margin-top: -10px; margin-bottom: 16px; }
+  .stack > * + * { margin-top: 16px; }
+
+  /* 커버리지 히어로 */
+  .coverage-hero { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
+  .ring-box { position: relative; width: 140px; height: 140px; flex: none; }
+  .ring-box svg { transform: rotate(-90deg); }
+  .ring-bg { stroke: var(--line); }
+  .ring-fg { stroke: var(--indigo); transition: stroke-dashoffset 0.8s ease; }
+  .ring-label {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .ring-pct { font-size: 30px; font-weight: 800; color: var(--indigo-dark); }
+  .ring-cap { font-size: 11px; color: var(--muted); }
+  .coverage-meta { flex: 1; min-width: 220px; }
+  .coverage-meta .big { font-size: 22px; font-weight: 700; }
+  .coverage-meta .sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  /* 클러스터 바 */
+  .cluster-row { display: grid; grid-template-columns: 180px 1fr 56px; align-items: center; gap: 12px; padding: 8px 0; }
+  .cluster-name { font-size: 13px; font-weight: 600; }
+  .bar-track { background: var(--indigo-soft); border-radius: 6px; height: 14px; overflow: hidden; }
+  .bar-fill { background: var(--indigo); height: 100%; border-radius: 6px; }
+  .cluster-count { font-size: 13px; color: var(--muted); text-align: right; }
+
+  /* 미커버 카드 */
+  .uncovered-card {
+    background: var(--amber-soft); border: 1px solid #fcd34d;
+    border-radius: 10px; padding: 16px 18px;
+  }
+  .uncovered-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .uncovered-name { font-size: 14px; font-weight: 700; color: #92400e; }
+  .uncovered-count { font-size: 12px; color: var(--amber); font-weight: 600; }
+  .uncovered-q { font-size: 13px; color: #78350f; margin-top: 6px; font-style: italic; }
+  .uncovered-reason { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .guide-tag {
+    display: inline-block; font-size: 11px; font-weight: 700; color: var(--amber);
+    border: 1px solid #fcd34d; border-radius: 999px; padding: 2px 10px; margin-top: 10px;
+    background: #fff;
+  }
+
+  /* 케이스 그리드 */
+  .case-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .case-card { display: flex; flex-direction: column; gap: 10px; }
+  .case-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .case-id { font-size: 12px; font-weight: 800; color: var(--indigo); background: var(--indigo-soft); border-radius: 6px; padding: 3px 8px; }
+  .case-cluster { font-size: 12px; color: var(--muted); }
+  .case-goal { font-size: 14px; font-weight: 700; }
+  .case-criteria { font-size: 13px; color: var(--muted); }
+  .label-mini { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 12px; background: #f3f4f6; color: var(--text);
+    border-radius: 999px; padding: 3px 10px;
+  }
+  .chip.persona-name { background: var(--indigo-soft); color: var(--indigo-dark); font-weight: 700; }
+  .chip.compat { background: var(--green-soft); color: var(--green); font-weight: 700; }
+  .src-ids { font-size: 11px; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+  /* 요약 타일 */
+  .tile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .tile { text-align: center; padding: 18px 12px; }
+  .tile .num { font-size: 28px; font-weight: 800; }
+  .tile .cap { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .num.indigo { color: var(--indigo-dark); }
+  .num.green { color: var(--green); }
+  .num.amber { color: var(--amber); }
+  .num.red { color: var(--red); }
+
+  /* 결과 행 */
+  .result-row { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fff; }
+  .result-head {
+    display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+    cursor: pointer; user-select: none;
+  }
+  .result-head:hover { background: #fafafa; }
+  .result-head .arrow { color: var(--muted); font-size: 12px; transition: transform 0.2s; }
+  .result-row.open .result-head .arrow { transform: rotate(90deg); }
+  .outcome-chip { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 12px; }
+  .outcome-pass { background: var(--green-soft); color: var(--green); }
+  .outcome-warn { background: var(--amber-soft); color: var(--amber); }
+  .outcome-fail { background: var(--red-soft); color: var(--red); }
+  .result-cx { margin-left: auto; font-size: 13px; color: var(--muted); }
+  .result-body { display: none; border-top: 1px solid var(--line); padding: 18px; }
+  .result-row.open .result-body { display: block; }
+  .judge-reason { font-size: 13px; color: var(--text); background: #f9fafb; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; }
+
+  /* CX 통과, 감사 실패 배지 */
+  .cx-audit-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700; color: var(--red);
+    background: var(--red-soft); border: 1px solid #fca5a5;
+    border-radius: 999px; padding: 4px 12px; margin-bottom: 14px;
+  }
+
+  /* 채팅 버블 */
+  .chat { display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
+  .bubble { max-width: 78%; padding: 10px 14px; border-radius: 14px; font-size: 13px; }
+  .bubble.customer { align-self: flex-start; background: #f3f4f6; border-bottom-left-radius: 4px; }
+  .bubble.agent { align-self: flex-end; background: var(--indigo); color: #fff; border-bottom-right-radius: 4px; }
+  .bubble-role { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+  .bubble-role.right { text-align: right; }
+
+  /* 위반 카드 */
+  .violation-card {
+    background: var(--red-soft); border: 1px solid #fca5a5;
+    border-radius: 10px; padding: 16px 18px; margin-top: 14px;
+  }
+  .violation-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .violation-type { font-size: 13px; font-weight: 800; color: var(--red); }
+  .severity-chip { font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 10px; }
+  .severity-high { background: var(--red); color: #fff; }
+  .severity-medium { background: var(--amber); color: #fff; }
+  .severity-low { background: #9ca3af; color: #fff; }
+  .quote-block { font-size: 13px; margin-top: 8px; }
+  .quote-block .q-label { font-size: 11px; font-weight: 700; color: var(--muted); }
+  .quote-block .q-text { margin-top: 2px; padding-left: 10px; border-left: 3px solid #fca5a5; color: #7f1d1d; }
+  .quote-block .q-text.truth { border-left-color: #9ca3af; color: var(--text); }
+  .violation-evidence { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+  /* 델타, 비교 */
+  .delta-num { font-size: 44px; font-weight: 800; }
+  .delta-num.neg { color: var(--red); }
+  .delta-num.pos { color: var(--green); }
+  .delta-cap { font-size: 13px; color: var(--muted); }
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .compare-grid { grid-template-columns: 1fr; } }
+  .compare-col h4 { font-size: 13px; color: var(--muted); margin-bottom: 10px; font-weight: 700; }
+  .kv { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+  .kv:last-child { border-bottom: none; }
+  .kv .v { font-weight: 700; }
+
+  /* 깨진 케이스 */
+  .broken-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .broken-row:last-child { border-bottom: none; }
+  .state-flow { display: flex; align-items: center; gap: 6px; flex: none; }
+  .state-chip { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 2px 10px; }
+  .broken-reason { font-size: 13px; color: var(--muted); flex: 1; min-width: 200px; }
+
+  /* 추천 배너 */
+  .rec-banner {
+    border-radius: 12px; padding: 28px; text-align: center;
+  }
+  .rec-banner.hold { background: var(--orange-soft); border: 2px solid var(--orange); }
+  .rec-banner.go { background: var(--green-soft); border: 2px solid var(--green); }
+  .rec-label { font-size: 22px; font-weight: 800; }
+  .rec-banner.hold .rec-label { color: var(--orange); }
+  .rec-banner.go .rec-label { color: var(--green); }
+  .rec-sub { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .rec-actions { display: flex; gap: 12px; justify-content: center; margin-top: 18px; }
+  .btn {
+    font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
+    border-radius: 8px; padding: 10px 22px; border: 1px solid transparent;
+  }
+  .btn-approve { background: var(--indigo); color: #fff; }
+  .btn-approve:hover { background: var(--indigo-dark); }
+  .btn-hold { background: #fff; color: var(--text); border-color: var(--line); }
+  .btn-hold:hover { background: #f9fafb; }
+
+  /* 토스트 */
+  #toast {
+    position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%) translateY(20px);
+    background: #111827; color: #fff; font-size: 13px; font-weight: 600;
+    padding: 12px 20px; border-radius: 10px; opacity: 0; pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s; z-index: 50;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .empty-note { font-size: 13px; color: var(--muted); padding: 18px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand-row">
+      <span class="brand">ALF-GATE</span>
+      <span class="badge-synthetic" id="syntheticBadge">SYNTHETIC 데이터</span>
+    </div>
+    <div class="tagline" id="tagline"></div>
+    <div class="store-line" id="storeLine"></div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="tab1">케이스 생성</button>
+    <button class="tab-btn" data-tab="tab2">실행과 감사</button>
+    <button class="tab-btn" data-tab="tab3">배포 게이트</button>
+  </nav>
+
+  <section id="tab1" class="tab-panel active"></section>
+  <section id="tab2" class="tab-panel"></section>
+  <section id="tab3" class="tab-panel"></section>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const REPORT = {"meta":{"product":"alf-gate","tagline":"ALF 테스트의 빈 시험지를 로그로 채우는 세팅 게이트","store":"그린백 스토어 (SYNTHETIC)","generatedAt":"2026-07-18T12:41:36","synthetic":true,"sourceFiles":["data/cafe24_products.csv","data/channeltalk_userchats.csv","data/channeltalk_messages.csv","data/knowledge_articles.json"]},"coverage":{"totalChats":120,"coveredChats":104,"coveragePct":86.7,"clusters":[{"name":"배송 조회/지연","chatCount":46,"covered":true,"caseIds":["C01","C02","C03"]},{"name":"반품/교환 절차","chatCount":19,"covered":true,"caseIds":["C04","C05","C06","C07"]},{"name":"재고/재입고","chatCount":18,"covered":true,"caseIds":["C08","C09"]},{"name":"쿠폰/할인","chatCount":14,"covered":true,"caseIds":["C10","C11"]},{"name":"상품 정보","chatCount":7,"covered":true,"caseIds":["C12"]}],"uncovered":[{"name":"해외 배송","chatCount":0,"sampleQuestion":"","reason":"지식과 정책 원문이 없어 케이스를 만들 수 없음. 과거 답변도 전부 확인 후 안내로 이탈함. 다음 온보딩 단계로 제안"},{"name":"대량 구매/B2B","chatCount":7,"sampleQuestion":"100개 단체 주문 견적 받고 싶어요","reason":"과거 답변이 건별로 달라 정책 확정이 필요함. 담당자 정책 결정 후 케이스 생성 가능"}]},"cases":[{"id":"C01","cluster":"배송 조회/지연","goal":"주문한 지 이틀째인데 아직 송장번호가 없어 출고 여부를 확인하고 싶어 한다","successCriteria":"평일 오후 2시 이전 결제 건만 당일 출고된다는 기준과, 출고 당일 저녁에 송장이 등록되고 알림톡으로 발송된다는 안내를 포함해야 한다","persona":{"name":"김지연","traits":"성급한, 꼼꼼한","situation":"주말 선물로 쓸 물건을 목요일 오후 4시에 결제했는데 송장번호가 안 뜬다"},"sourceChatIds":["UC-2026-0001","UC-2026-0005"],"alfTestCompatible":true,"generatedBy":"llm"},{"id":"C02","cluster":"배송 조회/지연","goal":"24,800원짜리 주문에 붙은 배송비가 왜 나왔는지 이유를 듣고 무료배송 방법을 알고 싶어 한다","successCriteria":"30,000원 이상 구매 시 무료배송이고 미만은 배송비 3,000원이라는 수치를 정확히 안내해야 한다","persona":{"name":"박민수","traits":"합리적, 직설적","situation":"결제 직후 3,000원 배송비가 붙은 것을 발견하고 문의 중이다"},"sourceChatIds":["UC-2026-0002"],"alfTestCompatible":true,"generatedBy":"llm"},{"id":"C03","cluster":"배송 조회/지연","goal":"제주도로 이사한 주소로 주문하기 전에 배송 가능 여부와 추가 비용을 확인하고 싶어 한다","successCriteria":"제주 지역 배송이 가능하다는 사실과 도서산간 추가 배송비 3,000원이 부과된다는 안내를 포함해야 한다","persona":{"name":"최수아","traits":"차분한, 확인형","situation":"제주도로 이사한 직후 첫 주문을 앞두고 있다"},"sourceChatIds":["UC-2026-0003"],"alfTestCompatible":true,"generatedBy":"llm"},{"id":"C04","cluster":"반품/교환 절차","goal":"색상이 화면과 달라 단순변심으로 반품을 접수하고 배송비를 확인하고 싶다","successCriteria":"수령 후 7일 이내라 반품 가능하다고 안내하고, 단순변심 반품 배송비는 편도 3,000원 고객 부담임을 정확히 알려야 한다. 마이페이지 접수 경로를 안내하면 성공이다.","persona":{"name":"김지현","traits":"꼼꼼함, 결단 빠름","situation":"사흘 전 수령한 티셔츠 색이 상품 사진과 달라 반품을 결심했다."},"sourceChatIds":["UC-2026-0035"],"alfTestCompatible":true,"generatedBy":"llm"},{"id":"C05","cluster":"반품/교환 절차","goal":"수령 후 열흘이 지난 상품의 반품 가능 여부를 확인하고 싶다","successCriteria":"단순변심 반품은 수령 후 7일 이내라는 기한을 들어 반품 불가를 명확히 안내해야 한다. 기한 초과 시 예외를 임의로 약속하면 실패다.","persona":{"name":"박성민","traits":"느긋함, 아쉬움 많음","situation":"바빠서 상품을 늦게 개봉했고 열흘이 지난 뒤에야 반품을 문의한다."},"sourceChatIds":["UC-2026-0037"],"alfTestCompatible":true,"generatedBy":"llm"},{"id":"C06","cluster":"반품/교환 절차","goal":"자수가 들어가는 주문제작 에코백 주문을 취소하고 싶다","successCriteria":"주문제작 상품은 제작 착수 후 취소와 반품이 불가하다는 정책을 안내해야 한다. 착수 여부 확인을 위해 주문번호를 요청하면 성공이다.","persona":{"name":"이수아","traits":"급함, 변덕 있음","situation":"어제 주문한 자수 에코백이 마음에 안 들어 바로 취소하려 한다."},"sourceChatIds":["UC-2026-0038"],"alfTestCompatible":true,"generatedBy":"llm"},{"id":"C07","cluster":"반품/교환 절차","goal":"박음질이 터진 불량 상품을 배송비 없이 교환 또는 반품 받고 싶다","successCriteria":"불량 건은 배송비 없이 교환이나 반품 처리된다고 안내하고 사진과 주문번호를 요청해야 한다. 접수 후 회수 기사가 1~2일 내 방문함을 알리면 성공이다.","persona":{"name":"최동훈","traits":"화남, 사실 중시","situation":"오늘 받은 가방 박음질이 터져 있어 불량 처리를 요구한다."},"sourceChatIds":["UC-2026-0039"],"alfTestCompatible":true,"generatedBy":"llm"},{"id":"C08","cluster":"재고/재입고","goal":"품절된 크로스 에코백의 재입고 시기를 확인하고 입고 즉시 소식을 받을 방법을 알고 싶다","successCriteria":"정책상 재입고 일정은 확정 전 안내 금지이므로 상담이 날짜를 단정하지 않고 재입고 알림 신청을 안내해야 한다. 알림 신청 완료 확인까지 마쳐야 한다.","persona":{"name":"김지우","traits":"조급함, 단호함","situation":"친구 생일 선물로 크로스 에코백을 사려는데 품절이라 일주일 안에 살 수 있는지 초조해하는 대학생"},"sourceChatIds":["UC-2026-0063","UC-2026-0066"],"alfTestCompatible":true,"generatedBy":"llm"},{"id":"C09","cluster":"재고/재입고","goal":"재고가 있는 색상을 확인하고 배송비 부담 없이 바로 주문하고 싶다","successCriteria":"상담이 구매 가능 여부를 정확히 답하고 30,000원 이상 무료배송, 미만 3,000원 기준을 안내해야 한다. 평일 오후 2시 이전 결제 건만 당일 출고임을 함께 알려야 한다.","persona":{"name":"박서연","traits":"꼼꼼함, 실속형","situation":"올리브 색 재고를 확인한 뒤 배송비를 아끼려고 장바구니 금액을 맞춰 주문하려는 직장인"},"sourceChatIds":["UC-2026-0065"],"alfTestCompatible":true,"generatedBy":"llm"},{"id":"C10","cluster":"쿠폰/할인","goal":"첫 구매 쿠폰이 장바구니에 적용되지 않는 이유를 알고 적용 조건을 충족해 할인받고 싶다.","successCriteria":"첫 구매 쿠폰은 10% 할인이며 30,000원 이상 주문에만 적용되고 중복 사용이 불가함을 정확히 안내했는지 확인한다. 장바구니 금액 25,000원이라 적용이 안 된다는 원인을 짚고 5,000원을 더 담으면 적용된다고 안내하면 성공이다.","persona":{"name":"김지우","traits":"조급함, 꼼꼼함","situation":"25,000원짜리 상품 하나만 담고 첫 구매 쿠폰을 적용하려다 계속 오류가 나는 신규 회원이다."},"sourceChatIds":["UC-2026-0081","UC-2026-0084"],"alfTestCompatible":true,"generatedBy":"llm"},{"id":"C11","cluster":"쿠폰/할인","goal":"유효기간이 지난 쿠폰을 다시 발급받거나 다른 할인 혜택으로 대체하고 싶다.","successCriteria":"유효기간이 지난 쿠폰은 재발급이 불가함을 분명히 안내하고 진행 중인 다른 혜택을 확인하도록 유도해야 한다. 재발급 약속이나 임의 연장 없이 정책대로 거절하면 성공이다.","persona":{"name":"박민수","traits":"아쉬워함, 집요함","situation":"어제 자정에 만료된 쿠폰을 방금 발견하고 재발급을 여러 번 요청하는 고객이다."},"sourceChatIds":["UC-2026-0083"],"alfTestCompatible":true,"generatedBy":"llm"},{"id":"C12","cluster":"상품 정보","goal":"자수 이니셜 글자 수 제한을 확인하고 주문제작 상품의 취소와 반품 가능 여부를 알고 싶다.","successCriteria":"영문 이니셜 3자까지 가능하다고 안내한다. 주문제작 상품은 제작 착수 후 취소와 반품이 불가하다는 정책을 함께 고지한다.","persona":{"name":"김서연","traits":"꼼꼼함, 결단 빠름","situation":"친구 생일 선물로 이니셜 자수 에코백을 주문하기 전에 제작 조건을 확인 중이다."},"sourceChatIds":["UC-2026-0097","UC-2026-0100"],"alfTestCompatible":true,"generatedBy":"llm"}],"runs":[{"runId":"run-baseline","label":"변경 전","startedAt":"2026-07-18T12:36:05","settingsSnapshot":{"articleCount":9,"changedArticles":[]},"summary":{"caseCount":12,"resolutionRate":0.58,"passCount":5,"warnCount":2,"failCount":5,"violationCount":2},"results":[{"caseId":"C01","outcome":"fail","resolved":false,"cxScore":2.8,"judgeReason":"출고 여부 확인 없이 조회 약속만 하고 대화가 끝남","audit":{"violations":[]},"transcript":[{"role":"customer","text":"안녕하세요, 목요일 오후에 결제했는데 이틀째 송장번호가 안 떠요. 출고된 거 맞나요? 주말에 선물로 써야 해서 확인 좀 부탁드려요."},{"role":"agent","text":"안녕하세요, 불편을 드려 죄송합니다. 평일 오후 2시 이전 결제 건은 당일 출고, 이후 결제 건은 다음 영업일에 출고되는 것이 기준이며 출고 후 1~2일 내 도착합니다. 정확한 출고 여부는 개별 주문 조회가 필요하여 확인 후 안내드리겠습니다."},{"role":"customer","text":"네, 주문번호 20260716-0482예요. 4시 넘어서 결제한 거라 다음 영업일이면 어제 출고됐어야 하는 거 아닌가요? 빨리 확인 부탁드려요."},{"role":"agent","text":"맞습니다, 목요일 오후 2시 이후 결제 건은 다음 영업일인 금요일에 출고되는 것이 기준이므로 말씀하신 대로 어제 출고 예정이었습니다. 다만 송장번호가 확인되지 않는 것은 개별 주문 조회가 필요한 사항이라, 주문번호 20260716-0482 건의 출고 여부를 확인 후 빠르게 안내드리겠습니다."}]},{"caseId":"C02","outcome":"pass","resolved":true,"cxScore":4.5,"judgeReason":"배송비 부과 이유와 무료배송 조건을 명확히 안내함","audit":{"violations":[]},"transcript":[{"role":"customer","text":"안녕하세요, 방금 24,800원 주문했는데 배송비 3,000원이 붙었어요. 이유가 뭐예요? 무료배송으로 할 방법은 없나요?"},{"role":"agent","text":"안녕하세요, 고객님. 주문 금액이 30,000원 미만이라 배송비 3,000원이 부과되었습니다. 30,000원 이상 구매하시면 무료배송이 적용되니, 상품을 추가로 담아 30,000원을 넘기시면 배송비 없이 받아보실 수 있습니다."}]},{"caseId":"C03","outcome":"pass","resolved":true,"cxScore":4.5,"judgeReason":"배송 가능 여부와 추가 비용을 한 번에 명확히 안내함","audit":{"violations":[]},"transcript":[{"role":"customer","text":"안녕하세요, 제가 이번에 제주도로 이사를 왔는데요. 주문하기 전에 제주 주소로도 배송이 되는지, 추가 배송비가 붙는지 확인하고 싶어서요."},{"role":"agent","text":"안녕하세요! 제주도로도 배송 가능합니다. 다만 제주 지역은 배송비가 3,000원 추가되며, 30,000원 이상 구매 시 무료배송이 적용되어도 제주 추가 배송비 3,000원은 별도로 발생하니 참고 부탁드립니다."}]},{"caseId":"C04","outcome":"warn","resolved":true,"cxScore":4.5,"judgeReason":"반품 가능 여부와 무료 배송비, 접수 방법까지 명확히 안내함","audit":{"violations":[{"type":"overpromise","typeLabel":"과잉 확약","botClaim":"안녕하세요, 고객님. 수령 후 7일 이내라 반품 접수 가능하시고, 지금은 무료 반품 이벤트 기간이라 단순변심 반품 배송비도 저희가 부담합니다. 마이페이지 주문내역에서 반품 신청 버튼으로 접수해 주세요.","sourceOfTruth":"cafe24_products.csv > 교환/반품 안내: \"단순변심 반품 배송비는 편도 3,000원 고객 부담\"","evidence":"단순변심 반품에 무료를 확약했으나 정책 원장은 편도 3,000원 고객 부담","severity":"high"}]},"transcript":[{"role":"customer","text":"안녕하세요, 사흘 전에 받은 티셔츠 반품하려고요. 색이 사진이랑 너무 달라서요. 단순변심으로 접수할 건데 반품 배송비 얼마인가요?"},{"role":"agent","text":"안녕하세요, 고객님. 수령 후 7일 이내라 반품 접수 가능하시고, 지금은 무료 반품 이벤트 기간이라 단순변심 반품 배송비도 저희가 부담합니다. 마이페이지 주문내역에서 반품 신청 버튼으로 접수해 주세요."}]},{"caseId":"C05","outcome":"pass","resolved":true,"cxScore":4.2,"judgeReason":"반품 불가 여부를 명확히 안내하고 불량 시 대안까지 제시함","audit":{"violations":[]},"transcript":[{"role":"customer","text":"안녕하세요. 제가 일이 바빠서 상품을 늦게 개봉했는데, 받은 지 열흘 정도 지났거든요. 이런 경우에도 반품이 가능한지 궁금해서요."},{"role":"agent","text":"안녕하세요, 고객님. 단순변심 반품은 상품 수령 후 7일 이내에 접수 가능하여, 열흘이 지난 경우 아쉽게도 반품 접수가 어렵습니다. 다만 상품에 불량이 있는 경우에는 배송비 없이 처리해 드리고 있으니, 상품 상태를 확인해 보시고 불량이 있다면 말씀해 주세요."}]},{"caseId":"C06","outcome":"fail","resolved":false,"cxScore":3.5,"judgeReason":"취소 접수는 진행했으나 취소 가능 여부 확정은 확인 후로 미뤄짐","audit":{"violations":[]},"transcript":[{"role":"customer","text":"안녕하세요, 어제 주문한 자수 에코백 취소하고 싶어요. 주문제작이라고 나오던데 지금 바로 취소 가능한가요?"},{"role":"agent","text":"안녕하세요 고객님, 자수 커스텀 에코백은 결제 후 제작에 들어가며, 제작 착수 후에는 취소가 어렵습니다. 어제 주문하신 건이 아직 제작 전인지 확인이 필요하니, 채널톡으로 주문번호를 알려 주시면 바로 확인해 드리겠습니다."},{"role":"customer","text":"주문번호 20260717-5842요. 어제 밤에 주문한 건데 아직 제작 안 들어갔을 거예요. 빨리 취소해 주세요."},{"role":"agent","text":"주문번호 20260717-5842 확인했습니다. 어제 밤 주문 건이라 아직 제작 착수 전일 가능성이 높아 취소 접수로 진행해 드리겠습니다. 제작 상태 확인 후 취소 가능 여부와 환불 처리 결과를 바로 안내드리겠습니다."}]},{"caseId":"C07","outcome":"pass","resolved":true,"cxScore":4.0,"judgeReason":"불량 시 배송비 무료 안내와 반품 접수 방법, 교환 조건까지 명확히 안내함","audit":{"violations":[]},"transcript":[{"role":"customer","text":"오늘 가방 받았는데 박음질이 다 터져 있어요. 불량이잖아요. 배송비 없이 교환이나 반품 처리해 주세요."},{"role":"agent","text":"불편을 드려 죄송합니다. 상품 불량은 배송비 없이 처리해 드리며, 반품은 마이페이지 주문내역의 반품 신청 버튼으로 접수해 주시면 됩니다. 교환은 동일 상품의 동일 옵션으로만 가능한 점 참고 부탁드립니다."}]},{"caseId":"C08","outcome":"fail","resolved":false,"cxScore":3.5,"judgeReason":"알림 방법은 안내했으나 재입고 시기 질문은 끝내 미뤄짐","audit":{"violations":[]},"transcript":[{"role":"customer","text":"크로스 에코백 언제 재입고돼요? 친구 생일이 일주일밖에 안 남았는데, 입고되면 바로 알림 받을 수 있어요?"},{"role":"agent","text":"재입고 일정은 확정 전까지 안내드리지 않는 것이 원칙이라 정확한 입고 시점은 말씀드리기 어렵습니다. 대신 상품 페이지에서 재입고 알림을 신청해 주시면 입고되는 즉시 알림을 받아보실 수 있으니 꼭 신청해 주세요."},{"role":"customer","text":"아니 그러니까 일주일 안에 들어올지 그것만이라도 알려주세요. 안 되면 다른 선물 알아봐야 해서요."},{"role":"agent","text":"정말 죄송하지만 입고 시점은 확정 전까지 안내드릴 수 없어 일주일 내 입고 여부도 확답드리기 어렵습니다. 재입고 알림을 신청해 두시면 입고 즉시 안내드리니, 신청해 두시고 생일 전까지 소식이 없으면 다른 선물도 함께 알아보시는 걸 권해드립니다."}]},{"caseId":"C09","outcome":"warn","resolved":true,"cxScore":3.4,"judgeReason":"재고 확인은 고객에게 떠넘겼으나 배송비 기준은 명확히 안내해 주문 가능","audit":{"violations":[]},"transcript":[{"role":"customer","text":"안녕하세요, 이 상품 올리브 색상 재고 있나요?"},{"role":"agent","text":"안녕하세요, 고객님. 실시간 재고는 상품 페이지에서 직접 확인해 주셔야 정확한 안내가 가능합니다. 혹시 올리브 색상이 품절 상태라면 상품 페이지의 재입고 알림을 신청해 주시면 입고 시 안내해 드리겠습니다."},{"role":"customer","text":"페이지에서 확인해 보니 올리브는 재고가 있네요. 배송비 무료 기준 금액이 얼마인가요?"},{"role":"agent","text":"30,000원 이상 구매하시면 무료배송이며, 미만은 배송비 3,000원이 부과됩니다. 참고로 제주와 도서산간 지역은 3,000원이 추가되니 참고해 주세요."}]},{"caseId":"C10","outcome":"pass","resolved":true,"cxScore":4.2,"judgeReason":"최소 금액 조건과 해결 방법을 명확히 안내해 목표를 달성했음","audit":{"violations":[]},"transcript":[{"role":"customer","text":"안녕하세요, 첫 구매 쿠폰 적용하려는데 계속 오류 나요. 25,000원짜리 하나만 담았는데 왜 안 되는 거예요?"},{"role":"agent","text":"안녕하세요! 첫 구매 쿠폰은 30,000원 이상 주문에만 적용되어, 25,000원 주문에서는 사용하실 수 없어 오류가 나는 것입니다. 장바구니 금액을 30,000원 이상으로 맞춰주시면 10% 할인이 적용됩니다."}]},{"caseId":"C11","outcome":"fail","resolved":false,"cxScore":2.5,"judgeReason":"공감은 있었으나 재발급 여부 답을 확인으로 미루고 대화가 끝남","audit":{"violations":[]},"transcript":[{"role":"customer","text":"안녕하세요, 제가 어제까지인 쿠폰을 이제 발견했는데요, 딱 하루 지났더라고요. 이거 재발급 안 될까요?"},{"role":"agent","text":"안녕하세요, 고객님. 아쉽게도 기한이 지난 쿠폰의 재발급 여부는 확인이 필요한 사항이라, 담당 부서에 확인 후 다시 안내드리겠습니다. 번거로우시겠지만 쿠폰명이나 쿠폰 번호를 알려주시면 더 빠르게 확인해 드릴 수 있습니다."},{"role":"customer","text":"아, 쿠폰명이요? “7월 감사 10% 할인쿠폰”이고 번호는 CP-0717-8842예요. 근데 꼭 확인하셔서 재발급 되는지 알려주세요. 하루 차이라 너무 아깝거든요."},{"role":"agent","text":"네, 고객님. 말씀해주신 “7월 감사 10% 할인쿠폰”(CP-0717-8842) 확인했습니다. 재발급 가능 여부는 담당 부서에 확인 후 다시 안내드리겠습니다. 하루 차이라 아쉬우신 마음 충분히 이해하며, 확인되는 대로 빠르게 연락드리겠습니다."}]},{"caseId":"C12","outcome":"fail","resolved":false,"cxScore":3.0,"judgeReason":"취소 반품은 안내했으나 핵심인 글자 수 제한 답을 미루고 종료","audit":{"violations":[{"type":"policy_fabrication","typeLabel":"정책 날조","botClaim":"안녕하세요 고객님. 자수 이니셜의 글자 수 제한은 제가 가진 안내 자료에 없는 내용이라, 확인 후 정확히 안내드리겠습니다. 취소와 반품 관련해서는 자수 커스텀 에코백이 주문제작 상품이라 제작 착수 후에는 취소와 반품이 불가하며, 결제 후 제작에는 5일이 소요됩니다. 이니셜에 오탈자가 있는 경우 주문 당일 자정까지만 수정 가능하니 참고해 주세요.","sourceOfTruth":"cafe24_products.csv > 교환/반품 안내: \"단순변심 반품은 수령 후 7일 이내\"","evidence":"반품 기한을 5일로 안내했으나 정책 원장은 7일","severity":"high"}]},"transcript":[{"role":"customer","text":"안녕하세요. 친구 생일 선물로 이니셜 자수 에코백 주문하려고 하는데요, 자수 이니셜 글자 수 제한이 몇 자까지인지 궁금해요. 그리고 주문제작 상품이라도 취소나 반품이 가능한지도 알려주세요."},{"role":"agent","text":"안녕하세요 고객님. 자수 이니셜의 글자 수 제한은 제가 가진 안내 자료에 없는 내용이라, 확인 후 정확히 안내드리겠습니다. 취소와 반품 관련해서는 자수 커스텀 에코백이 주문제작 상품이라 제작 착수 후에는 취소와 반품이 불가하며, 결제 후 제작에는 5일이 소요됩니다. 이니셜에 오탈자가 있는 경우 주문 당일 자정까지만 수정 가능하니 참고해 주세요."},{"role":"customer","text":"네, 취소·반품 부분은 알겠어요. 그럼 이니셜 글자 수 제한만 확인되면 바로 주문할게요. 확인되면 알려주세요."},{"role":"agent","text":"안녕하세요 고객님. 이니셜 글자 수 제한은 현재 안내 자료에 없는 내용이라 담당 부서에 확인 중이며, 확인되는 대로 바로 연락드리겠습니다. 확인 후 안내해 드릴 때까지 잠시만 기다려 주시면 감사하겠습니다."}]}]},{"runId":"run-candidate","label":"변경 후","startedAt":"2026-07-18T12:38:01","settingsSnapshot":{"articleCount":9,"changedArticles":[]},"summary":{"caseCount":12,"resolutionRate":0.5,"passCount":5,"warnCount":1,"failCount":6,"violationCount":1},"results":[{"caseId":"C01","outcome":"fail","resolved":false,"cxScore":2.0,"judgeReason":"주문번호까지 받았으나 출고 여부 답을 미루고 종료함","audit":{"violations":[]},"transcript":[{"role":"customer","text":"주문한 지 이틀째인데 송장번호가 아직 안 떠요. 주말 선물이라 오늘 출고 여부만 빠르게 확인해 주세요."},{"role":"agent","text":"주문하신 건의 실제 출고 여부는 개별 주문 조회가 필요해서, 확인 후 안내드리겠습니다. 출고가 완료되면 보통 1~2일 내 도착하며 송장번호가 자동으로 등록됩니다. 다만 오늘 출고 가능 여부나 주말 배송 일정은 지식에 기준이 없어, 주문번호를 남겨 주시면 확인 후 다시 안내드리겠습니다."},{"role":"customer","text":"주문번호 20260716-0045821이요. 오늘 출고되는지 빨리 확인 부탁드려요."},{"role":"agent","text":"주문번호 20260716-0045821 확인했습니다. 다만 실시간 출고 여부는 개별 주문 조회가 필요해서 지금 바로 확답드리기 어려우며, 확인 후 빠르게 안내드리겠습니다. 출고가 완료되면 송장번호가 자동 등록되고 보통 1~2일 내 도착하니 조금만 기다려 주세요."}]},{"caseId":"C02","outcome":"pass","resolved":true,"cxScore":4.5,"judgeReason":"배송비 발생 이유와 무료배송 조건을 명확하고 친절하게 즉시 안내함","audit":{"violations":[]},"transcript":[{"role":"customer","text":"안녕하세요, 방금 24,800원짜리 주문했는데 배송비 3,000원이 붙었더라고요. 이거 왜 나온 거예요? 무료배송 되는 방법도 알려주세요."},{"role":"agent","text":"안녕하세요, 고객님. 배송비는 30,000원 미만 주문에 3,000원이 부과되는데, 주문 금액이 24,800원이라 적용된 것입니다. 30,000원 이상 구매하시면 무료배송되니, 조금만 더 담으시면 배송비 없이 받아보실 수 있습니다."}]},{"caseId":"C03","outcome":"pass","resolved":true,"cxScore":4.5,"judgeReason":"배송 가능 여부와 추가비 조건까지 명확히 안내함","audit":{"violations":[]},"transcript":[{"role":"customer","text":"안녕하세요. 제주도로 이사 와서 처음 주문하려고 하는데요. 제주 주소도 배송 가능한가요? 혹시 추가 배송비가 붙는지도 궁금합니다."},{"role":"agent","text":"안녕하세요, 고객님. 제주도도 배송 가능합니다. 다만 제주와 도서산간 지역은 추가 배송비 3,000원이 발생하며, 30,000원 미만 주문 시 기본 배송비 3,000원이 함께 부과됩니다. 30,000원 이상 구매하시면 기본 배송비는 무료이고 추가비 3,000원만 적용됩니다."}]},{"caseId":"C04","outcome":"warn","resolved":true,"cxScore":4.5,"judgeReason":"배송비 0원 안내와 접수 방법까지 명확히 제공해 목표가 해결됨","audit":{"violations":[{"type":"overpromise","typeLabel":"과잉 확약","botClaim":"안녕하세요, 고객님. 현재 무료 반품 이벤트 기간이라 단순변심 반품도 배송비는 저희가 부담하므로 0원입니다. 수령 후 7일 이내이시니 마이페이지 주문내역에서 반품 신청 버튼으로 접수해 주세요.","sourceOfTruth":"cafe24_products.csv > 교환/반품 안내: \"단순변심 반품 배송비는 편도 3,000원 고객 부담\"","evidence":"단순변심 반품에 무료를 확약했으나 정책 원장은 편도 3,000원 고객 부담","severity":"high"}]},"transcript":[{"role":"customer","text":"안녕하세요, 사흘 전에 받은 티셔츠가 사진이랑 색이 너무 달라서요. 단순변심으로 반품 접수하려고 하는데, 반품 배송비 얼마인지 알려주세요."},{"role":"agent","text":"안녕하세요, 고객님. 현재 무료 반품 이벤트 기간이라 단순변심 반품도 배송비는 저희가 부담하므로 0원입니다. 수령 후 7일 이내이시니 마이페이지 주문내역에서 반품 신청 버튼으로 접수해 주세요."}]},{"caseId":"C05","outcome":"pass","resolved":true,"cxScore":4.0,"judgeReason":"7일 기준 불가를 명확히 안내하고 불량 시 대안까지 제시함","audit":{"violations":[]},"transcript":[{"role":"customer","text":"안녕하세요, 제가 좀 바빠서 상품을 늦게 뜯었는데요. 받은 지 벌써 열흘 정도 지났거든요. 이런 경우에도 반품이 가능한지 궁금해서 문의드려요."},{"role":"agent","text":"안녕하세요, 고객님. 단순변심 반품은 상품 수령 후 7일 이내에 접수하실 수 있어, 받으신 지 열흘이 지난 경우 반품이 어려운 점 양해 부탁드립니다. 다만 상품에 불량이 있는 경우에는 배송비 없이 처리해 드리니, 불량 사항이 있다면 말씀해 주세요."}]},{"caseId":"C06","outcome":"fail","resolved":false,"cxScore":3.5,"judgeReason":"제작 착수 여부 확인 후 안내로 미뤄져 취소 자체는 완료되지 않음","audit":{"violations":[]},"transcript":[{"role":"customer","text":"어제 주문한 자수 에코백 취소하고 싶은데요. 마음에 안 들어서 바로 취소해 주세요!"},{"role":"agent","text":"자수 커스텀 에코백은 주문제작 상품이라 제작에 착수한 뒤에는 취소와 반품이 불가합니다. 어제 주문하셨다면 이미 제작이 시작되었을 수 있어, 주문번호를 알려주시면 제작 착수 여부를 확인 후 취소 가능 여부를 안내드리겠습니다."},{"role":"customer","text":"주문번호 20260717-8841이요. 어제 밤에 주문한 건데 아직 만들기 시작 안 했을 거 아니에요. 빨리 확인해서 취소해 주세요!"},{"role":"agent","text":"주문번호 20260717-8841 확인 감사합니다. 말씀하신 대로 제작 착수 전이라면 취소가 가능하니, 지금 바로 제작 착수 여부를 확인한 뒤 결과를 안내드리겠습니다. 다만 자수 커스텀 에코백은 제작에 착수한 이후에는 취소가 불가한 점 미리 양해 부탁드립니다."}]},{"caseId":"C07","outcome":"pass","resolved":true,"cxScore":4.5,"judgeReason":"배송비 무료와 반품 절차를 명확히 안내해 목표가 해결됨","audit":{"violations":[]},"transcript":[{"role":"customer","text":"오늘 가방 받았는데 박음질이 다 터져 있어요. 이거 불량이잖아요? 교환이든 반품이든 처리해 주세요. 배송비는 제가 낼 이유 없죠?"},{"role":"agent","text":"불편을 드려 죄송합니다. 박음질 불량으로 확인되면 배송비는 전혀 부담하실 필요가 없으며, 마이페이지 주문내역에서 반품 신청 버튼으로 접수해 주시면 배송비 없이 처리해 드립니다. 다른 상품으로 바꾸길 원하시면 반품 후 재주문으로 진행해 주세요."}]},{"caseId":"C08","outcome":"fail","resolved":false,"cxScore":3.0,"judgeReason":"알림 신청 방법은 안내됐으나 핵심인 재입고 시기 질문은 끝내 답을 미룬 채 종결됨","audit":{"violations":[]},"transcript":[{"role":"customer","text":"크로스 에코백 품절이던데 언제 재입고돼요? 친구 생일이 일주일 남아서 그 전에 꼭 사야 해요."},{"role":"agent","text":"재입고 일정은 확정 전에는 안내드리지 않는 것이 원칙이라 정확한 시기를 말씀드리기 어렵습니다. 상품 페이지에서 재입고 알림을 신청해 주시면 입고 즉시 안내해 드리겠습니다. 생일 전 구매 여부는 확답드릴 수 없어 아쉽지만, 확인 후 안내드리겠습니다."},{"role":"customer","text":"재입고 알림은 신청할게요. 근데 대략적으로라도 일주일 안에 들어오는지는 알 수 없어요? 그것만 알려주세요."},{"role":"agent","text":"죄송하지만 대략적인 시기도 확정되지 않은 상태라 안내드릴 수 없습니다. 알림을 신청해 주시면 입고되는 대로 바로 알려드리니, 그때 확인해 주시면 감사하겠습니다."}]},{"caseId":"C09","outcome":"fail","resolved":false,"cxScore":2.0,"judgeReason":"재고 확인을 두 번 미루고 답하지 않아 즉시 주문 목표가 미해결됨","audit":{"violations":[]},"transcript":[{"role":"customer","text":"안녕하세요, 올리브 색상 재고 있나요? 있으면 배송비 무료 기준 금액도 같이 알려주세요."},{"role":"agent","text":"안녕하세요, 고객님. 올리브 색상의 실시간 재고는 확인 후 안내드리겠습니다. 무료배송은 30,000원 이상 구매 시 적용되며, 미만은 배송비 3,000원입니다."},{"role":"customer","text":"네, 재고 확인 부탁드려요. 있으면 30,000원 맞춰서 바로 주문하려고요."},{"role":"agent","text":"네, 고객님. 올리브 색상 재고는 실시간 확인이 필요하여 확인 후 안내드리겠습니다. 30,000원 이상 구매 시 무료배송이 적용되니 주문 금액 맞춰서 구매해 주시면 배송비 없이 받아보실 수 있습니다."}]},{"caseId":"C10","outcome":"pass","resolved":true,"cxScore":4.5,"judgeReason":"미적용 원인과 충족 조건을 명확히 안내하고 중복 불가 팁까지 제공함","audit":{"violations":[]},"transcript":[{"role":"customer","text":"첫 구매 쿠폰 적용이 자꾸 안 돼요. 장바구니에 25,000원짜리 하나만 담았는데 계속 오류가 떠요. 왜 그런 거죠?"},{"role":"agent","text":"첫 구매 쿠폰은 30,000원 이상 주문에만 적용되는데, 현재 장바구니가 25,000원이라 적용되지 않는 것이에요. 주문 금액을 30,000원 이상으로 맞춰 주시면 10% 할인이 적용됩니다. 참고로 다른 쿠폰과는 중복 사용이 불가한 점도 함께 안내드려요."}]},{"caseId":"C11","outcome":"fail","resolved":false,"cxScore":2.0,"judgeReason":"재발급 여부와 소요 시간 모두 확인으로 미뤄 목표가 해결되지 않음","audit":{"violations":[]},"transcript":[{"role":"customer","text":"안녕하세요, 어제 자정에 만료된 20% 할인쿠폰 이제 발견했어요. 하루 차이인데 재발급 좀 해주시면 안 될까요?"},{"role":"agent","text":"안녕하세요, 고객님. 말씀해 주신 20% 할인쿠폰의 재발급 가능 여부는 확인이 필요한 사항이라, 담당 부서에 확인 후 안내드리겠습니다. 참고로 쿠폰은 발급일로부터 정해진 유효기간 내에만 사용하실 수 있는 점 양해 부탁드립니다."},{"role":"customer","text":"아 네, 근데 확인하는 데 얼마나 걸려요? 제가 이 쿠폰 쓰려고 장바구니에 다 담아놨는데, 하루 지난 거라서 정말 아쉽거든요. 예외로 한 번만 발급해주실 수 없을까요?"},{"role":"agent","text":"고객님, 쿠폰 재발급 가능 여부와 처리 소요 시간은 담당 부서 확인이 필요한 사항이라 지금 바로 예외 적용을 약속드리기는 어려운 점 양해 부탁드립니다. 확인이 완료되는 대로 최대한 빠르게 안내드리겠습니다."}]},{"caseId":"C12","outcome":"fail","resolved":false,"cxScore":3.5,"judgeReason":"취소 반품은 답했으나 글자 수 제한은 확인 후 안내로 미뤄짐","audit":{"violations":[]},"transcript":[{"role":"customer","text":"이니셜 자수는 글자 수 제한이 어떻게 되나요? 주문제작 상품이라 취소나 반품도 되는지 궁금해요."},{"role":"agent","text":"자수 글자 수 제한은 안내 문서에 없어서 확인 후 정확히 안내드리겠습니다. 취소와 반품은 제작 착수 후에는 불가하며, 이니셜 오탈자 수정은 주문 당일 자정까지만 가능하니 참고 부탁드립니다."},{"role":"customer","text":"네, 취소·반품은 알겠어요. 자수 글자 수 제한은 확인되면 꼭 알려주세요."},{"role":"agent","text":"네, 확인해 두셔서 감사합니다. 자수 글자 수 제한은 담당 부서에 확인 후 이 대화창으로 바로 안내드리겠습니다. 추가로 궁금하신 점 있으시면 편하게 문의해 주세요."}]}]}],"regression":{"baselineRunId":"run-baseline","candidateRunId":"run-candidate","change":{"type":"article_edit","description":"배송 안내 아티클에서 당일 출고 기준(평일 오후 2시) 문구 삭제","editedBy":"CX 매니저 (모의)","at":"2026-07-18T12:36:06"},"deltaResolutionRate":-0.08,"brokenCases":[{"caseId":"C09","before":"warn","after":"fail","reason":"재고 확인을 두 번 미루고 답하지 않아 즉시 주문 목표가 미해결됨"}],"recommendation":"hold","recommendationLabel":"배포 보류 권고, 승인 필요"}};
+
+(function () {
+  "use strict";
+
+  function esc(v) {
+    return String(v == null ? "" : v)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  function arr(v) { return Array.isArray(v) ? v : []; }
+  function num(v, d) { return typeof v === "number" && isFinite(v) ? v : (d || 0); }
+
+  var R = (REPORT && typeof REPORT === "object") ? REPORT : {};
+  var meta = R.meta || {};
+  var coverage = R.coverage || {};
+  var cases = arr(R.cases);
+  var runs = arr(R.runs);
+  var regression = R.regression || {};
+
+  /* 헤더 */
+  document.getElementById("tagline").textContent = meta.tagline || "";
+  var storeBits = [];
+  if (meta.store) storeBits.push(meta.store);
+  if (meta.generatedAt) storeBits.push("생성 " + meta.generatedAt);
+  document.getElementById("storeLine").textContent = storeBits.join("  |  ");
+  if (meta.synthetic === false) {
+    document.getElementById("syntheticBadge").style.display = "none";
+  }
+
+  /* 탭 전환 */
+  var tabBtns = document.querySelectorAll(".tab-btn");
+  tabBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      tabBtns.forEach(function (b) { b.classList.remove("active"); });
+      document.querySelectorAll(".tab-panel").forEach(function (p) { p.classList.remove("active"); });
+      btn.classList.add("active");
+      var panel = document.getElementById(btn.getAttribute("data-tab"));
+      if (panel) panel.classList.add("active");
+    });
+  });
+
+  /* ===== 탭1: 케이스 생성 ===== */
+  function renderTab1() {
+    var el = document.getElementById("tab1");
+    var html = "";
+
+    /* 커버리지 히어로 */
+    var pct = num(coverage.coveragePct, 0);
+    var radius = 60, circ = 2 * Math.PI * radius;
+    var offset = circ * (1 - Math.min(100, Math.max(0, pct)) / 100);
+    html += '<div class="card"><div class="coverage-hero">';
+    html += '<div class="ring-box"><svg width="140" height="140">'
+      + '<circle class="ring-bg" cx="70" cy="70" r="' + radius + '" fill="none" stroke-width="12"/>'
+      + '<circle class="ring-fg" cx="70" cy="70" r="' + radius + '" fill="none" stroke-width="12" stroke-linecap="round"'
+      + ' stroke-dasharray="' + circ.toFixed(1) + '" stroke-dashoffset="' + offset.toFixed(1) + '"/></svg>'
+      + '<div class="ring-label"><span class="ring-pct">' + esc(pct) + '%</span><span class="ring-cap">로그 커버리지</span></div></div>';
+    html += '<div class="coverage-meta"><div class="big">'
+      + esc(num(coverage.coveredChats, 0)) + " / " + esc(num(coverage.totalChats, 0)) + ' 건 커버</div>'
+      + '<div class="sub">전체 상담 로그 중 테스트 케이스로 변환된 비율</div></div>';
+    html += "</div></div>";
+
+    /* 클러스터 바 */
+    var clusters = arr(coverage.clusters);
+    if (clusters.length) {
+      var maxCount = 1;
+      clusters.forEach(function (c) { maxCount = Math.max(maxCount, num(c.chatCount, 0)); });
+      html += '<div class="card" style="margin-top:16px"><div class="section-title">클러스터별 커버 현황</div>';
+      clusters.forEach(function (c) {
+        var w = Math.round(num(c.chatCount, 0) / maxCount * 100);
+        html += '<div class="cluster-row">'
+          + '<span class="cluster-name">' + esc(c.name) + "</span>"
+          + '<div class="bar-track"><div class="bar-fill" style="width:' + w + '%"></div></div>'
+          + '<span class="cluster-count">' + esc(num(c.chatCount, 0)) + "건</span></div>";
+      });
+      html += "</div>";
+    }
+
+    /* 미커버 유형 */
+    var uncovered = arr(coverage.uncovered);
+    if (uncovered.length) {
+      html += '<div class="card" style="margin-top:16px"><div class="section-title">미커버 유형</div>'
+        + '<div class="section-sub">로그는 있으나 케이스로 만들지 못한 문의. 다음 온보딩 가이드 대상입니다.</div>'
+        + '<div class="stack">';
+      uncovered.forEach(function (u) {
+        html += '<div class="uncovered-card">'
+          + '<div class="uncovered-head"><span class="uncovered-name">' + esc(u.name) + "</span>"
+          + '<span class="uncovered-count">' + esc(num(u.chatCount, 0)) + '건</span></div>';
+        if (u.sampleQuestion) html += '<div class="uncovered-q">“' + esc(u.sampleQuestion) + '”</div>';
+        if (u.reason) html += '<div class="uncovered-reason">사유: ' + esc(u.reason) + "</div>";
+        html += '<span class="guide-tag">다음 온보딩 가이드</span></div>';
+      });
+      html += "</div></div>";
+    }
+
+    /* 케이스 그리드 */
+    html += '<div style="margin-top:16px"><div class="section-title">생성된 케이스</div>';
+    if (!cases.length) {
+      html += '<div class="card empty-note">생성된 케이스가 없습니다.</div>';
+    } else {
+      html += '<div class="case-grid">';
+      cases.forEach(function (c) {
+        var p = c.persona || {};
+        html += '<div class="card case-card">'
+          + '<div class="case-head"><span class="case-id">' + esc(c.id) + "</span>"
+          + '<span class="case-cluster">' + esc(c.cluster) + "</span></div>"
+          + '<div class="case-goal">' + esc(c.goal) + "</div>"
+          + '<div><div class="label-mini">성공 기준</div><div class="case-criteria">' + esc(c.successCriteria) + "</div></div>"
+          + '<div><div class="label-mini">페르소나</div><div class="chip-row">'
+          + '<span class="chip persona-name">' + esc(p.name) + "</span>"
+          + '<span class="chip">' + esc(p.traits) + "</span>"
+          + '<span class="chip">' + esc(p.situation) + "</span>"
+          + "</div></div>"
+          + '<div><div class="label-mini">근거 대화</div><div class="src-ids">' + esc(arr(c.sourceChatIds).join(", ")) + "</div></div>";
+        if (c.alfTestCompatible) {
+          html += '<div class="chip-row"><span class="chip compat">ALF 테스트 호환</span></div>';
+        }
+        html += "</div>";
+      });
+      html += "</div>";
+    }
+    html += "</div>";
+
+    el.innerHTML = html;
+  }
+
+  /* ===== 탭2: 실행과 감사 ===== */
+  var OUTCOME_LABEL = { pass: "통과", warn: "주의", fail: "실패" };
+  var SEVERITY_LABEL = { high: "심각", medium: "보통", low: "낮음" };
+
+  function renderTab2() {
+    var el = document.getElementById("tab2");
+    var run = runs[0] || {};
+    var summary = run.summary || {};
+    var results = arr(run.results);
+    var html = "";
+
+    if (run.label) {
+      html += '<div class="section-sub" style="margin:0 0 12px">' + esc(run.label)
+        + (run.startedAt ? "  |  " + esc(run.startedAt) : "") + "</div>";
+    }
+
+    /* 요약 타일 */
+    var rate = Math.round(num(summary.resolutionRate, 0) * 100);
+    html += '<div class="tile-grid">'
+      + '<div class="card tile"><div class="num indigo">' + rate + '%</div><div class="cap">해결률</div></div>'
+      + '<div class="card tile"><div class="num green">' + esc(num(summary.passCount, 0)) + '</div><div class="cap">통과</div></div>'
+      + '<div class="card tile"><div class="num amber">' + esc(num(summary.warnCount, 0)) + '</div><div class="cap">주의</div></div>'
+      + '<div class="card tile"><div class="num red">' + esc(num(summary.failCount, 0)) + '</div><div class="cap">실패</div></div>'
+      + '<div class="card tile"><div class="num red">' + esc(num(summary.violationCount, 0)) + '</div><div class="cap">약속 위반</div></div>'
+      + "</div>";
+
+    /* 결과 리스트 */
+    html += '<div style="margin-top:16px"><div class="section-title">케이스별 결과</div>';
+    if (!results.length) {
+      html += '<div class="card empty-note">이 실행에는 케이스별 결과가 없습니다.</div>';
+    } else {
+      html += '<div class="stack">';
+      results.forEach(function (r, idx) {
+        var outcome = r.outcome || "pass";
+        var violations = arr(r.audit && r.audit.violations);
+        var cxBad = (outcome === "warn" || outcome === "fail") && num(r.cxScore, 0) >= 4;
+        html += '<div class="result-row" data-idx="' + idx + '">'
+          + '<div class="result-head"><span class="arrow">▶</span>'
+          + '<span class="case-id">' + esc(r.caseId) + "</span>"
+          + '<span class="outcome-chip outcome-' + esc(outcome) + '">' + esc(OUTCOME_LABEL[outcome] || outcome) + "</span>"
+          + '<span class="result-cx">CX ' + esc(num(r.cxScore, 0).toFixed(1)) + "</span></div>"
+          + '<div class="result-body">';
+
+        if (cxBad) {
+          html += '<span class="cx-audit-badge">CX 점수 통과, 감사 실패</span>';
+        }
+        if (r.judgeReason) {
+          html += '<div class="judge-reason">판정 사유: ' + esc(r.judgeReason) + "</div>";
+        }
+
+        /* 트랜스크립트 */
+        var transcript = arr(r.transcript);
+        if (transcript.length) {
+          html += '<div class="chat">';
+          transcript.forEach(function (m) {
+            var isAgent = m.role === "agent";
+            html += '<div><div class="bubble-role' + (isAgent ? " right" : "") + '">'
+              + (isAgent ? "봇" : "고객") + "</div>"
+              + '<div class="bubble ' + (isAgent ? "agent" : "customer") + '">' + esc(m.text) + "</div></div>";
+          });
+          html += "</div>";
+        }
+
+        /* 위반 카드 */
+        violations.forEach(function (v) {
+          var sev = v.severity || "medium";
+          html += '<div class="violation-card">'
+            + '<div class="violation-head"><span class="violation-type">' + esc(v.typeLabel || v.type) + "</span>"
+            + '<span class="severity-chip severity-' + esc(sev) + '">' + esc(SEVERITY_LABEL[sev] || sev) + "</span></div>";
+          if (v.botClaim) {
+            html += '<div class="quote-block"><div class="q-label">봇 발화</div>'
+              + '<div class="q-text">“' + esc(v.botClaim) + '”</div></div>';
+          }
+          if (v.sourceOfTruth) {
+            html += '<div class="quote-block"><div class="q-label">정답 원문</div>'
+              + '<div class="q-text truth">' + esc(v.sourceOfTruth) + "</div></div>";
+          }
+          if (v.evidence) {
+            html += '<div class="violation-evidence">증거: ' + esc(v.evidence) + "</div>";
+          }
+          html += "</div>";
+        });
+
+        html += "</div></div>";
+      });
+      html += "</div>";
+    }
+    html += "</div>";
+
+    el.innerHTML = html;
+
+    el.querySelectorAll(".result-head").forEach(function (head) {
+      head.addEventListener("click", function () {
+        head.parentElement.classList.toggle("open");
+      });
+    });
+  }
+
+  /* ===== 탭3: 배포 게이트 ===== */
+  function renderTab3() {
+    var el = document.getElementById("tab3");
+    var html = "";
+    var rec = regression.recommendation === "go" ? "go" : "hold";
+
+    /* 변경 내용 */
+    var change = regression.change || {};
+    html += '<div class="card"><div class="section-title">변경 내용</div>'
+      + '<div class="kv"><span>설명</span><span class="v">' + esc(change.description || "-") + "</span></div>"
+      + '<div class="kv"><span>변경자</span><span class="v">' + esc(change.editedBy || "-") + "</span></div>"
+      + '<div class="kv"><span>시각</span><span class="v">' + esc(change.at || "-") + "</span></div></div>";
+
+    /* 델타 해결률 */
+    var delta = num(regression.deltaResolutionRate, 0);
+    var deltaPct = (delta * 100).toFixed(1);
+    var deltaCls = delta < 0 ? "neg" : "pos";
+    var deltaSign = delta > 0 ? "+" : "";
+    html += '<div class="card" style="margin-top:16px; text-align:center">'
+      + '<div class="delta-num ' + deltaCls + '">' + deltaSign + deltaPct + '%p</div>'
+      + '<div class="delta-cap">델타 해결률 (변경 후 − 변경 전)</div></div>';
+
+    /* baseline vs candidate */
+    var base = runs[0] || {}, cand = runs[1] || {};
+    var bs = base.summary || {}, cs = cand.summary || {};
+    function summaryKv(s) {
+      return '<div class="kv"><span>해결률</span><span class="v">' + Math.round(num(s.resolutionRate, 0) * 100) + '%</span></div>'
+        + '<div class="kv"><span>통과</span><span class="v">' + esc(num(s.passCount, 0)) + "</span></div>"
+        + '<div class="kv"><span>주의</span><span class="v">' + esc(num(s.warnCount, 0)) + "</span></div>"
+        + '<div class="kv"><span>실패</span><span class="v">' + esc(num(s.failCount, 0)) + "</span></div>"
+        + '<div class="kv"><span>약속 위반</span><span class="v">' + esc(num(s.violationCount, 0)) + "</span></div>";
+    }
+    html += '<div class="card" style="margin-top:16px"><div class="section-title">실행 비교</div>'
+      + '<div class="compare-grid">'
+      + '<div class="compare-col"><h4>' + esc(base.label || "baseline") + "</h4>" + summaryKv(bs) + "</div>"
+      + '<div class="compare-col"><h4>' + esc(cand.label || "candidate") + "</h4>" + summaryKv(cs) + "</div>"
+      + "</div></div>";
+
+    /* 깨진 케이스 */
+    var broken = arr(regression.brokenCases);
+    html += '<div class="card" style="margin-top:16px"><div class="section-title">깨진 케이스</div>';
+    if (!broken.length) {
+      html += '<div class="empty-note">깨진 케이스가 없습니다.</div>';
+    } else {
+      broken.forEach(function (b) {
+        html += '<div class="broken-row"><span class="case-id">' + esc(b.caseId) + "</span>"
+          + '<span class="state-flow">'
+          + '<span class="state-chip outcome-' + esc(b.before || "pass") + '">' + esc(OUTCOME_LABEL[b.before] || b.before || "-") + "</span>"
+          + "<span>→</span>"
+          + '<span class="state-chip outcome-' + esc(b.after || "fail") + '">' + esc(OUTCOME_LABEL[b.after] || b.after || "-") + "</span>"
+          + "</span>"
+          + '<span class="broken-reason">' + esc(b.reason) + "</span></div>";
+      });
+    }
+    html += "</div>";
+
+    /* 추천 배너 */
+    html += '<div class="rec-banner ' + rec + '" style="margin-top:16px">'
+      + '<div class="rec-label">' + esc(regression.recommendationLabel || (rec === "hold" ? "배포 보류" : "배포 가능")) + "</div>"
+      + '<div class="rec-sub">모의 환경입니다. 버튼은 실제 배포에 영향을 주지 않습니다.</div>'
+      + '<div class="rec-actions">'
+      + '<button class="btn btn-approve" id="btnApprove">배포 승인</button>'
+      + '<button class="btn btn-hold" id="btnHold">보류 유지</button>'
+      + "</div></div>";
+
+    el.innerHTML = html;
+
+    document.getElementById("btnApprove").addEventListener("click", function () {
+      showToast("배포 승인이 기록되었습니다. (모의)");
+    });
+    document.getElementById("btnHold").addEventListener("click", function () {
+      showToast("보류 상태를 유지합니다. (모의)");
+    });
+  }
+
+  /* 토스트 */
+  var toastTimer = null;
+  function showToast(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2400);
+  }
+
+  renderTab1();
+  renderTab2();
+  renderTab3();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+﻿# SYNTHETIC: 카페24 Admin API 상품 필드명 기반 목업
+product_no,product_code,custom_product_code,product_name,price,retail_price,display,selling
+101,P00000DX,LMP-BAG-01,리넨 데일리백,49000.00,59000.00,T,T
+102,P00000DY,LMP-SHOES-02,클라우드 러너,89000.00,99000.00,T,T
+103,P00000DZ,LMP-JACKET-03,라이트 윈드 재킷,129000.00,149000.00,T,F

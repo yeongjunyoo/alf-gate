@@ -1,0 +1,8 @@
+{
+  "provenance": "SYNTHETIC",
+  "notice": "실제 고객, 주문, 상품 정보가 아닌 직접 생성한 목업입니다.",
+  "schemas": {
+    "cafe24": "https://developers.cafe24.com/docs/en/api/admin/",
+    "channel_message": "https://developers.channel.io/docs/send-a-message-to-a-userchat-1"
+  }
+}

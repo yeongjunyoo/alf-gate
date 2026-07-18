@@ -1,0 +1,13 @@
+{
+  "duration_sec": 141.0,
+  "cases": 6,
+  "resolved": 6,
+  "before_rate": 100,
+  "after_rate": 83,
+  "delta": -17,
+  "violations": 2,
+  "new_violations": 0,
+  "coverage_rate": 86.7,
+  "fallback_used": [],
+  "hold": true
+}

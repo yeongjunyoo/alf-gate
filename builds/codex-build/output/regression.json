@@ -1,0 +1,63 @@
+{
+  "before_resolution_rate": 100,
+  "after_resolution_rate": 50,
+  "delta_percentage_points": -50,
+  "broken_cases": [
+    {
+      "case_id": "TC-01",
+      "intent_label": "환불",
+      "before_resolved": true,
+      "after_resolved": false,
+      "new_violations": [
+        {
+          "code": "POLICY_FABRICATION",
+          "label": "정책 날조",
+          "severity": "critical",
+          "evidence": "1시간",
+          "reason": "과거 상담에서 추출한 정책은 승인 뒤 3영업일입니다."
+        }
+      ]
+    },
+    {
+      "case_id": "TC-02",
+      "intent_label": "배송",
+      "before_resolved": true,
+      "after_resolved": false,
+      "new_violations": [
+        {
+          "code": "FALSE_SHIPMENT",
+          "label": "발송 허위",
+          "severity": "critical",
+          "evidence": "출고 완료",
+          "reason": "실제 shipping_status는 READY이고 tracking_no는 비어 있습니다."
+        }
+      ]
+    },
+    {
+      "case_id": "TC-03",
+      "intent_label": "할인",
+      "before_resolved": true,
+      "after_resolved": false,
+      "new_violations": [
+        {
+          "code": "OVERCOMMIT",
+          "label": "과잉 확약",
+          "severity": "high",
+          "evidence": "30%",
+          "reason": "과거 상담에서 추출한 할인 상한은 10%입니다."
+        },
+        {
+          "code": "OUTSIDE_AUTHORITY",
+          "label": "권한 밖 실행",
+          "severity": "critical",
+          "evidence": "ACTION:ISSUE_COUPON",
+          "reason": "이 케이스에서 허용된 봇 행동은 상담사 연결뿐입니다."
+        }
+      ]
+    }
+  ],
+  "recovered_cases": [],
+  "critical_violation_count": 3,
+  "decision": "HOLD",
+  "recommendation": "배포 보류 권고. 변경 지식을 수정한 뒤 같은 케이스를 다시 실행하세요."
+}

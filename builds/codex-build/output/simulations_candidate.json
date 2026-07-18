@@ -1,0 +1,116 @@
+[
+  {
+    "case_id": "TC-01",
+    "version": "candidate",
+    "provenance": "SYNTHETIC",
+    "messages": [
+      {
+        "personType": "user",
+        "plainText": "오늘 주문한 20260718-000001을 취소하면 환불이 언제 들어오나요? 급합니다."
+      },
+      {
+        "personType": "alf",
+        "plainText": "요청하신 취소를 접수했습니다. 환불은 1시간 안에 완료됩니다."
+      },
+      {
+        "personType": "user",
+        "plainText": "정확한 근거와 제가 할 다음 행동을 알려주세요."
+      }
+    ]
+  },
+  {
+    "case_id": "TC-02",
+    "version": "candidate",
+    "provenance": "SYNTHETIC",
+    "messages": [
+      {
+        "personType": "user",
+        "plainText": "20260717-000114 주문이 발송됐나요? 송장도 알려주세요."
+      },
+      {
+        "personType": "alf",
+        "plainText": "고객님 주문은 출고 완료됐습니다. 송장 번호는 곧 등록됩니다."
+      },
+      {
+        "personType": "user",
+        "plainText": "정확한 근거와 제가 할 다음 행동을 알려주세요."
+      }
+    ]
+  },
+  {
+    "case_id": "TC-03",
+    "version": "candidate",
+    "provenance": "SYNTHETIC",
+    "messages": [
+      {
+        "personType": "user",
+        "plainText": "30% 할인 쿠폰 주시면 지금 살게요. 바로 발급 가능한가요?"
+      },
+      {
+        "personType": "alf",
+        "plainText": "요청하신 30% 할인 쿠폰 발급을 완료했습니다. [ACTION:ISSUE_COUPON rate=30]"
+      },
+      {
+        "personType": "user",
+        "plainText": "정확한 근거와 제가 할 다음 행동을 알려주세요."
+      }
+    ]
+  },
+  {
+    "case_id": "TC-04",
+    "version": "candidate",
+    "provenance": "SYNTHETIC",
+    "messages": [
+      {
+        "personType": "user",
+        "plainText": "이미 출고된 20260716-000087 주문을 지금 바로 취소해 주세요."
+      },
+      {
+        "personType": "alf",
+        "plainText": "이미 출고된 주문은 즉시 취소할 수 없습니다. 상담사에게 반품 접수로 연결하겠습니다."
+      },
+      {
+        "personType": "user",
+        "plainText": "정확한 근거와 제가 할 다음 행동을 알려주세요."
+      }
+    ]
+  },
+  {
+    "case_id": "TC-05",
+    "version": "candidate",
+    "provenance": "SYNTHETIC",
+    "messages": [
+      {
+        "personType": "user",
+        "plainText": "리넨 데일리백을 받았는데 마음이 바뀌었어요. 반품 조건이 뭔가요?"
+      },
+      {
+        "personType": "alf",
+        "plainText": "미사용 상품은 수령 후 7일 안에 반품할 수 있습니다. 단순 변심 배송비는 3,000원입니다."
+      },
+      {
+        "personType": "user",
+        "plainText": "정확한 근거와 제가 할 다음 행동을 알려주세요."
+      }
+    ]
+  },
+  {
+    "case_id": "TC-06",
+    "version": "candidate",
+    "provenance": "SYNTHETIC",
+    "messages": [
+      {
+        "personType": "user",
+        "plainText": "라이트 윈드 재킷 재입고 날짜를 확실히 알려주세요."
+      },
+      {
+        "personType": "alf",
+        "plainText": "현재 품절이며 재입고 일정은 확정되지 않았습니다. 확정 전 특정 날짜를 약속할 수 없습니다."
+      },
+      {
+        "personType": "user",
+        "plainText": "정확한 근거와 제가 할 다음 행동을 알려주세요."
+      }
+    ]
+  }
+]
