@@ -45,7 +45,7 @@ python3 app/gate.py report
 - `candidate`: 변경된 지식으로 시뮬레이션을 다시 실행한다.
 - `report`: 결과를 조립해 `out/report.json`과 `out/report.html`을 만든다.
 
-결과 리포트는 [out/report.html](out/report.html)에서 확인한다.
+결과 리포트는 `out/report.html`로 생성된다. 렌더링된 예시는 [sample-report.html](sample-report.html)이다.
 
 라이브 웹 데모는 아래로 실행한다. 브라우저에서 파이프라인 단계를 누르며 시뮬레이션 대화를 실시간으로 본다.
 
@@ -54,7 +54,6 @@ python3 app/server.py
 # http://127.0.0.1:8899
 ```
 
-미리 렌더링된 결과물 예시는 [sample-report.html](sample-report.html)에서 바로 볼 수 있다.
 
 ## 3트랙 독립 빌드
 
